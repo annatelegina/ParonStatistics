@@ -5,9 +5,11 @@
 using namespace std;
 
 class strinfile{
-	static searchtree prefixtree;
-	static searchtree &suffixtree;
 public:
+	static searchtree prefixtree;
+	static searchtree suffixtree;
+	static searchtree roottree;
+
 	char filecodes[8];
 	char fileword[40];
 	char omon;
@@ -39,8 +41,7 @@ public:
 				char &c=str.fileword[i];
 				if (c>='À' && c<='ß'){
 					strinfile::prefixtree.addletter(c);
-					if (c>='À' && c<='ß')
-						str.word.add(c);
+					str.word.add(c);
 				}else if (c=='-'){
 					str.pref.add(strinfile::prefixtree.getcode());
 				}else if (c=='+'){
@@ -60,10 +61,12 @@ public:
 		++i;
 		while (str.fileword[i]>='À' && str.fileword[i]<='ß'){
 			char &c=str.fileword[i];
-			if (c>='À' && c<='ß')
-				str.word.add(c);
+			strinfile::roottree.addletter(c);
+			str.word.add(c);
 			++i;
 		}
+		strinfile::roottree.getcode();
+		
 		if (str.fileword[i]=='-')
 			++i;
 		char term;
@@ -101,7 +104,7 @@ public:
 			}
 			if (str.fileword[i]=='-'){
 				++i;
-				while (str.fileword[i]!='\0'){
+				while (str.fileword[i]>='À' && str.fileword[i]<='ß'){//str.fileword[i]!='\0'){
 					strinfile::suffixtree.addletter(str.fileword[i]);
 					str.word.add(str.fileword[i]);
 					++i;
@@ -129,4 +132,5 @@ public:
 
 
 searchtree strinfile::prefixtree;
-searchtree& strinfile::suffixtree=strinfile::prefixtree;
+searchtree strinfile::suffixtree;
+searchtree strinfile::roottree;

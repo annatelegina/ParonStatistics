@@ -42,6 +42,44 @@ void printstat(ofstream &out, const char* name, const arr<int> &stat, const vect
 	}
 }
 
+arr<char> cur_suff(MAX_WORD_WIDTH);
+ofstream *tree_out;
+void printtree(node* cur){
+	if (cur == NULL){
+		(*tree_out) << "NULL!" << endl;
+		return;
+	}
+	if (cur->adjletters.size() == 0){
+		(*tree_out) << cur_suff << endl;
+		return;
+	}
+	for (int i = 0; i < cur->adjletters.size(); i++){
+		cur_suff.add(cur->adjletters[i]);
+		printtree(cur -> adj[i]);
+		cur_suff.size = cur_suff.size - 1;
+	}
+}
+
+void print_morfemes(){
+	ofstream suffixes;
+	suffixes.open("suffixes.txt");
+	tree_out = &suffixes;
+	printtree(strinfile::suffixtree.header);
+	suffixes.close();
+	
+	ofstream prefixes;
+	prefixes.open("prefixes.txt");
+	tree_out = &prefixes;
+	printtree(strinfile::prefixtree.header);
+	prefixes.close();
+
+	ofstream roots;
+	roots.open("roots.txt");
+	tree_out = &roots;
+	printtree(strinfile::roottree.header);
+	roots.close();
+}
+
 // Usage:
 // ParonStatistics.exe [-e <num>] [-l <num>] [-w <num>] <input_file> <output_file> [ <statistics_file> [<error_file>] ]
 // -e <num> - (optional) maximal number of word examples for statistics, default value 0
@@ -105,24 +143,19 @@ int main(int argc, char* argv[]){
 		cerr << "Wrong output file!\n";
 		return 1;
 	}
-	/*arr<char> z(10), e(1);
-	z.add('a');
-	z.add('b');
-	z.add('c');
-	e = z;
-	cerr<< e << ' ' << z; 
-	*/
 	vector<const char*> errors;
 	wordgroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES);
-	while (in.peek()!=EOF){
+	while (in.peek() != EOF){
 		in >> wg;
-		for (int i=0; i<(int)wg.errors.size(); ++i){
+		for (int i = 0; i < (int)wg.errors.size(); ++i){
 			errors.push_back(wg.errors[i]);
 		}
 		out << wg;
 	}
 	in.close();
 	out.close();
+	
+	print_morfemes();
 
 //	cout << " Done.\n\nStatistics:\n\n";
 
