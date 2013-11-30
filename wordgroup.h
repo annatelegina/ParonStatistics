@@ -31,6 +31,9 @@ public:
 	arr<int>& morfstat(){
 		return tabl.morfstat;
 	}
+	arr<int>& diststat(){
+		return tabl.diststat;
+	}
 	vector<vector<arr<char> > >& wordexmp(){
 		return tabl.wordexmp;
 	}
@@ -43,7 +46,9 @@ public:
 	vector<vector<arr<char> > >& morfexmp(){
 		return tabl.morfexmp;
 	}
-
+	vector<vector<arr<char> > >& distexmp(){
+		return tabl.distexmp;
+	}
 	friend ifstream& operator>>(ifstream& in, wordgroup &wg){
 		wg.errors.clear();
 		wg.strs.reset();

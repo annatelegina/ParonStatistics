@@ -46,6 +46,7 @@ void printstat(ofstream &out, const char* name, const arr<int> &stat, const vect
 // <error_file> - (optional) path to error output file.
 
 int main(int argc, char* argv[]){
+	setlocale(LC_ALL,"RUSSIAN");
 	//In main function all file openings are marked with comments.
 	//bool argin = 0, argout = 0, argstat = 0, argerr = 0;
 	bool argw = 0, arge = 0, argl = 0;
@@ -83,7 +84,7 @@ int main(int argc, char* argv[]){
 		cerr << "Wrong input file!\n";
 		return 1;
 	}
-	cout << "Conversion in progress...";
+	cout << "Conversion in progress..." << endl;
 
 	ofstream out;
 	try {
@@ -153,7 +154,9 @@ int main(int argc, char* argv[]){
 			printstat(statout, "Prefix", wg.prefstat(), wg.prefexmp(), width);
 			printstat(statout, "Suffix", wg.suffstat(), wg.suffexmp(), width);
 			printstat(statout, "Morphemic (prefix+suffix)", wg.morfstat(), wg.morfexmp(), width);
-			printstat(statout, "Word", wg.wordstat(), wg.wordexmp(), width);
+			printstat(statout, "Levenstein distance", wg.wordstat(), wg.wordexmp(), width);
+			printstat(statout, "Distortion power", wg.diststat(), wg.distexmp(), width);
+
 			statout.close();
 		}
 	}
@@ -199,7 +202,7 @@ int main(int argc, char* argv[]){
 		}
 	}
 
-	//cout << "Press enter to quit...";
-	//getchar();
+	cout << "Press enter to quit...";
+	getchar();
 	return 0;
 }

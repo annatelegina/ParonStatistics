@@ -23,9 +23,9 @@ public:
 		return ar[i];
 	}
 	T& operator[](int i){
-		if (size<i+1){
-			size=i+1;
-			if (size>maxlen)
+		if (size < i+1){
+			size = i+1;
+			if (size > maxlen)
 				throw "not enough memory";
 		}
 		return ar[i];
