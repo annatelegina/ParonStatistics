@@ -65,12 +65,27 @@ public:
 	int cnt;
 	void rewrite(const arr<strinfile> &ar){
 		size = ar.size;
-		words += size;		
-		for (int i=0; i<size; ++i){
+		words += size;
+		int* meanings = new int[size];
+		for (int i = 0; i < size; ++i)
+			meanings[i] = 0;
+		for (int i = 0; i < size; ++i){
 			const strinfile &s1 = ar[i];
-			for (int j=0; j<i; ++j){
+			if (i > 0 && dist(ar[i].word, ar[i - 1].word) == 0){
+				meanings[i] = 1;
+				continue;
+			}
+			for (int j = 0; j < i; ++j){
 				const strinfile &s2 = ar[j];
-				if (cnt < 20) {
+				if (meanings[j])
+					continue;
+				int dist12 = dist(s1.word, s2.word);
+				if (dist12 == 0) {
+					meanings[i] = 1;
+					cerr << "Your file is not sorted " << s1.word << " " << s2.word << endl;
+					continue;
+				}
+				/*if (cnt < 20) {
 					cerr << s1.word << endl;
 					for (int k = 0; k < 4; k++){
 						cerr << s1.pref[k] << ' ' << s1.suff[k] << endl;
@@ -80,7 +95,7 @@ public:
 						cerr << s2.pref[k] << ' ' << s2.suff[k] << endl;
 					}
 					cnt++;
-				}
+				}*/		
 				if (s1.filecodes[3] == s2.filecodes[3] && s1.filecodes[5] == s2.filecodes[5]){
 					tab[i][j][0] = dist(s1.pref, s2.pref);
 					tab[i][j][1] = dist(s1.suff, s2.suff);
@@ -119,5 +134,6 @@ public:
 				}
 			}
 		}
+		delete[] meanings;
 	}
 };

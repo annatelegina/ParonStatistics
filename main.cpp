@@ -11,24 +11,31 @@ int MAX_EXAMPLES = 0;
 int PER_LINE = 10;
 int MAX_WORD_WIDTH = 25;
 
-void printstat(ofstream &out, const char* name, const arr<int> &stat, const vector<vector<arr<char> > > &examples, int width=10){
+void printstat(ofstream &out, const char* name, const arr<int> &stat, const vector<vector<arr<char> > > &examples, int width = 10, int max_cnt = 50){
 	out << name << " statistics:\n\n";
-	for (int i=0; i<=(stat.size-1)/PER_LINE; ++i){
-		for (int j=0; j<PER_LINE && j<stat.size-PER_LINE*i; ++j){
-			out << setw(width) << j+PER_LINE*i;			
+	int size = min(stat.size, max_cnt);
+	int line_size = (size - 1) / PER_LINE;
+	for (int i = 0; i <= line_size; ++i){
+		for (int j = 0; j < PER_LINE && j < size - PER_LINE * i; ++j){
+			out << setw(width) << j + PER_LINE * i;
 		}
 		out << endl;
-		for (int j=0; j<PER_LINE && j<stat.size-PER_LINE*i; ++j){
-			out << setw(width) << stat[j+PER_LINE*i];
+		for (int j = 0; j < PER_LINE && j < size - PER_LINE * i; ++j){
+			out << setw(width) << stat[j + PER_LINE * i];
 		}
 		out << endl;
-		for (int k=0; k<MAX_EXAMPLES; ++k){
-			for (int j=0; j<PER_LINE && j<stat.size-PER_LINE*i; ++j){
-				if (examples[j+PER_LINE*i].size() > k) 
-					out << setw(width) << examples[j+PER_LINE*i][k];
-				else
+		for (int k = 0; k < MAX_EXAMPLES; ++k){
+			int skip = 0;
+			for (int j = 0; j < PER_LINE && j < size - PER_LINE * i; ++j){
+				if (examples[j + PER_LINE * i].size() > k) 
+					out << setw(width) << examples[j + PER_LINE * i][k];
+				else{
 					out << setw(width) << ' ';
+					skip++;
+				}
 			}
+			if (skip == min(PER_LINE, size - PER_LINE * i))
+				break;
 			out << endl;
 		}
 		out << endl << endl;
@@ -154,8 +161,8 @@ int main(int argc, char* argv[]){
 			printstat(statout, "Prefix", wg.prefstat(), wg.prefexmp(), width);
 			printstat(statout, "Suffix", wg.suffstat(), wg.suffexmp(), width);
 			printstat(statout, "Morphemic (prefix+suffix)", wg.morfstat(), wg.morfexmp(), width);
-			printstat(statout, "Levenstein distance", wg.wordstat(), wg.wordexmp(), width);
-			printstat(statout, "Distortion power", wg.diststat(), wg.distexmp(), width);
+			printstat(statout, "Levenshtein distance", wg.wordstat(), wg.wordexmp(), width);
+			printstat(statout, "Distortion power", wg.diststat(), wg.distexmp(), width, 15);
 
 			statout.close();
 		}
