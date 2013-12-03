@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
 #include "wingetopt.h"
 using namespace std;
 
@@ -27,7 +28,7 @@ void printstat(ofstream &out, const char* name, const arr<int> &stat, const vect
 		for (int k = 0; k < MAX_EXAMPLES; ++k){
 			int skip = 0;
 			for (int j = 0; j < PER_LINE && j < size - PER_LINE * i; ++j){
-				if (examples[j + PER_LINE * i].size() > k) 
+				if ((int)examples[j + PER_LINE * i].size() > k) 
 					out << setw(width) << examples[j + PER_LINE * i][k];
 				else{
 					out << setw(width) << ' ';
@@ -43,41 +44,58 @@ void printstat(ofstream &out, const char* name, const arr<int> &stat, const vect
 }
 
 arr<char> cur_suff(MAX_WORD_WIDTH);
-ofstream *tree_out;
-void printtree(node* cur){
+string dict_key[5000];
+int dict_val[5000];
+int order[5000];
+int dict_size = 0;
+
+void make_dict(node* cur){
 	if (cur == NULL){
-		(*tree_out) << "NULL!" << endl;
 		return;
 	}
-	if (cur->adjletters.size() == 0){
-		(*tree_out) << cur_suff << endl;
-		return;
+	if (cur->count != 0){ //cur->adjletters.size() == 0){
+		dict_key[dict_size] = cur_suff.toString();
+		dict_val[dict_size] = cur->count;
+		dict_size++;
 	}
-	for (int i = 0; i < cur->adjletters.size(); i++){
+	for (int i = 0; i < (int)cur->adjletters.size(); i++){
 		cur_suff.add(cur->adjletters[i]);
-		printtree(cur -> adj[i]);
+		make_dict(cur -> adj[i]);
 		cur_suff.size = cur_suff.size - 1;
 	}
 }
 
-void print_morfemes(){
-	ofstream suffixes;
-	suffixes.open("suffixes.txt");
-	tree_out = &suffixes;
-	printtree(strinfile::suffixtree.header);
-	suffixes.close();
-	
-	ofstream prefixes;
-	prefixes.open("prefixes.txt");
-	tree_out = &prefixes;
-	printtree(strinfile::prefixtree.header);
-	prefixes.close();
+bool dict_less(int i, int j){
+	return (dict_val[i] < dict_val[j]) || (dict_val[i] == dict_val[j] && dict_key[i] < dict_key[j]);
+}
+bool lexic(int i, int j){
+	return (dict_key[i] < dict_key[j]);
+}
 
-	ofstream roots;
-	roots.open("roots.txt");
-	tree_out = &roots;
-	printtree(strinfile::roottree.header);
-	roots.close();
+void print_morfemes(const char* filename, node* header, const char* morphem_name = "morphem"){
+	ofstream tree_out;
+	tree_out.open(filename);
+	dict_size = 0;
+	make_dict(header);
+	int common_count = 0;
+	for (int i = 0; i < dict_size; i++)
+		common_count += dict_val[i];
+	tree_out << "Count of different " << morphem_name << ": "<< dict_size << endl;
+	tree_out << "Common count of " << morphem_name << ": " << common_count << endl;
+	tree_out << "Most popular " << morphem_name << ":" << endl;
+	for (int i = 0; i < dict_size; i++)
+		order[i] = i;
+	sort(order, order + dict_size, dict_less);
+	reverse(order, order + dict_size);
+	for (int i = 0; i < MAX_EXAMPLES; i++)
+		tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << endl;
+	tree_out << endl;
+	for (int i = 0; i < dict_size; i++)
+		order[i] = i;
+	sort(order, order + dict_size, lexic);
+	for (int i = 0; i < dict_size; i++)
+		tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << endl;
+	tree_out.close();
 }
 
 // Usage:
@@ -155,15 +173,17 @@ int main(int argc, char* argv[]){
 	in.close();
 	out.close();
 	
-	print_morfemes();
+	print_morfemes("suffixes.txt", strinfile::suffixtree.header, "suffixes");
+	print_morfemes("prefixes.txt", strinfile::prefixtree.header, "prefixes");
+	print_morfemes("roots.txt", strinfile::roottree.header, "roots");
 
 //	cout << " Done.\n\nStatistics:\n\n";
 
-	int width=2;
-	int maxwidth=wg.numofwordsstat();
-	while (maxwidth!=0){
+	int width = 2;
+	int maxwidth = wg.numofwordsstat();
+	while (maxwidth != 0){
 		++width;
-		maxwidth/=10;
+		maxwidth /= 10;
 	}
 	if (argw || MAX_EXAMPLES > 0) 
 		width = MAX_WORD_WIDTH;
@@ -233,7 +253,7 @@ int main(int argc, char* argv[]){
 				errout << "No mistakes found in source file\n\n";
 			else{
 				errout << errors.size() << " mistakes found in source file. Following lines were skipped:\n\n";
-				for (int i=0; i<(int)errors.size(); ++i){
+				for (int i = 0; i < (int)errors.size(); ++i){
 					errout << errors[i] << endl;
 				}
 				errout << endl;

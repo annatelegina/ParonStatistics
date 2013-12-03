@@ -8,15 +8,15 @@ public:
 	int maxlen;
 	int size;
 	explicit arr<T>(int maxlength): maxlen(maxlength), size(0){
-		ar=new T[maxlen];
+		ar = new T[maxlen];
 	}
 	~arr<T>(){
 		delete [] ar;
 	}
 	void add(const T &elem){
-		ar[size]=elem;
+		ar[size] = elem;
 		++size;
-		if (size>maxlen)
+		if (size > maxlen)
 			throw "not enough memory";
 	}
 	const T& operator[](int i) const{
@@ -43,19 +43,25 @@ public:
 		return *this;
 	}
 	void reset(){
-		size=0;
+		size = 0;
 	}
-	friend ostream& operator<< <>(ostream &out, const arr<T> &ar); /*{
-		ar.ar[ar.size]='\0';
-		out << ar.ar;
-		return out;
-	}*/
+	friend ostream& operator<< <>(ostream &out, const arr<T> &ar); 
+
+	string toString(){
+		char* str = new char[this->size + 1];
+		string s;
+		memcpy(str, this->ar, this->size * sizeof(char));
+		str[this->size] = '\0';
+		s = string(str);
+		delete[] str;
+		return s;
+	}
 };
 
 template <class T> ostream& operator<<(ostream &out, const arr<T> &ar){
 	char* str = new char[ar.size + 1];
 	memcpy(str, ar.ar, ar.size * sizeof(char));
-	str[ar.size]='\0';
+	str[ar.size] = '\0';
 	out << str;
 	delete[] str;
 	return out;

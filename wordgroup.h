@@ -59,32 +59,32 @@ public:
 			try{
 				in >> wg.strs[i];
 			}catch (char* err){
-				char *e=new char[strlen(err)]; 
+				char *e = new char[strlen(err)]; 
 				strcpy(e, err);
 				wg.errors.push_back(e);
 				--i;
 			}
 			++i;
-		}while (in.peek()!='+' && in.peek()!=EOF);
+		} while (in.peek() != '+' && in.peek() != EOF);
 		wg.tabl.rewrite(wg.strs);
 		return in;
 	}
 	friend ofstream& operator<<(ofstream& out, const wordgroup &wg){
-		for (int i=0; i<wg.strs.size; ++i){
-			const strinfile &s=wg.strs[i];
+		for (int i = 0; i < wg.strs.size; ++i){
+			const strinfile &s = wg.strs[i];
 			out << "+ " << s.filecodes[1] << ' ';
-			for (int w=0; w<2; ++w){
+			for (int w=0; w < 2; ++w){
 				out << "0 ";
 			}
 			out << s.word;
 			if (s.omon!='\0')
 				out << s.omon;
 			out << endl;
-			for (int j=0; j<wg.strs.size; ++j){
-				if (j!=i){
-					const strinfile &s2=wg.strs[j];
+			for (int j = 0; j < wg.strs.size; ++j){
+				if (j != i){
+					const strinfile &s2 = wg.strs[j];
 					out << "- " << s2.filecodes[1] << ' ';
-					for (int w=0; w<2; ++w){
+					for (int w = 0; w < 2; ++w){
 						out << wg.tabl(i,j,w) << ' ';
 					}
 					out << s2.word;
