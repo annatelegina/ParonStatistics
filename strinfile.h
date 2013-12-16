@@ -16,8 +16,9 @@ public:
 	arr<char> word;
 	arr<int> pref;
 	arr<int> suff;
+	arr<char> root;
 
-	strinfile(): word(40), pref(10), suff(10), omon('\0'){}
+	strinfile(): word(40), pref(10), suff(10), root(40), omon('\0'){}
 	friend ifstream& operator>>(ifstream& in, strinfile &str){
 		char sign = in.get();
 		in.getline(str.filecodes,8);
@@ -34,6 +35,7 @@ public:
 		str.word.reset();
 		str.pref.reset();
 		str.suff.reset();
+		str.root.reset();
 		str.omon = '\0';
 		int i = 0;
 		if (str.fileword[i] != '+'){
@@ -63,6 +65,7 @@ public:
 			char &c = str.fileword[i];
 			strinfile::roottree.addLetter(c);
 			str.word.add(c);
+			str.root.add(c);
 			++i;
 		}
 		strinfile::roottree.getCode();

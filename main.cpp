@@ -232,12 +232,12 @@ int main(int argc, char* argv[]){
 		}
 		if (!openerror) {
 			statout << wg.numofwordsstat() << " words read:\n\n";
-			printstat(statout, "Prefix", wg.prefstat(), wg.prefexmp(), width);
-			printstat(statout, "Suffix", wg.suffstat(), wg.suffexmp(), width);
-			printstat(statout, "Morphemic (prefix+suffix)", wg.morfstat(), wg.morfexmp(), width);
+			printstat(statout, "Prefix distance", wg.prefstat(), wg.prefexmp(), width);
+			printstat(statout, "Suffix distance", wg.suffstat(), wg.suffexmp(), width);
+			printstat(statout, "Morphemic (prefix+suffix) distance", wg.morfstat(), wg.morfexmp(), width);
 			printstat(statout, "Levenshtein distance", wg.wordstat(), wg.wordexmp(), width);
 			printstat(statout, "Distortion power", wg.diststat(), wg.distexmp(), width, 15);
-
+			printstat(statout, "Root Levenshtein distance", wg.rootstat(), wg.rootexmp(), width);
 			statout.close();
 		}
 	}

@@ -11,13 +11,13 @@ class table{
 	const int maxexmp;
 	int ***tab;
 public:
-	arr<int> wordstat, prefstat, suffstat, morfstat, diststat;
-	vector<vector<arr<char> > > wordexmp, prefexmp, suffexmp, morfexmp, distexmp;
+	arr<int> wordstat, prefstat, suffstat, morfstat, diststat, rootstat;
+	vector<vector<arr<char> > > wordexmp, prefexmp, suffexmp, morfexmp, distexmp, rootexmp;
 	int words;
 	int size;
 	table(int maxsiz, int maxdist, int maxexamples): maxexmp(maxexamples), maxsize(maxsiz), dist(maxdist), 
-		wordstat(maxdist), prefstat(10), suffstat(10), morfstat(20), words(0), diststat(40),
-		prefexmp(20), suffexmp(10), morfexmp(20), wordexmp(maxdist), distexmp(40)
+		wordstat(maxdist), prefstat(10), suffstat(10), morfstat(20), words(0), diststat(40), rootstat(10),
+		prefexmp(20), suffexmp(10), morfexmp(20), wordexmp(maxdist), distexmp(40), rootexmp(10)
 	{
 		tab=new int**[maxsize];
 		for (int i = 0; i < maxsize; ++i){
@@ -35,7 +35,9 @@ public:
 		for (int i = 0; i < 20; ++i)
 			morfstat[i] = 0;
 		for (int i = 0; i < 40; ++i)
-			diststat[i] = 0;		
+			diststat[i] = 0;
+		for (int i = 0; i < 10; ++i)
+			rootstat[i] = 0;
 		for (int i = 0; i < maxdist; ++i)
 			wordstat[i] = 0;
 		prefstat.reset();
@@ -43,6 +45,7 @@ public:
 		morfstat.reset();
 		wordstat.reset();
 		diststat.reset();
+		rootstat.reset();
 		cnt = 0;
 	}
 	~table(){
@@ -112,10 +115,17 @@ public:
 						distexmp[distortion].push_back(s2.word);
 						//cerr << distortion << ' ' << (double) dist12 / (s1.word.size * s2.word.size) << endl;
 					}
+					int dist_root = dist(s1.root, s2.root);
+					++rootstat[dist_root];
+					if ((int)rootexmp[dist_root].size() < maxexmp){
+						rootexmp[dist_root].push_back(s1.word);
+						rootexmp[dist_root].push_back(s2.word);
+					}
 				}else{
 					tab[i][j][0] = 9;
 					tab[i][j][1] = 9;
 					++wordstat[wordstat.maxlen - 1];
+					++rootstat[rootstat.maxlen - 1];
 				}				
 				++prefstat[tab[i][j][0]];
 				if ((int)prefexmp[tab[i][j][0]].size() < maxexmp){

@@ -34,6 +34,9 @@ public:
 	arr<int>& diststat(){
 		return tabl.diststat;
 	}
+	arr<int>& rootstat(){
+		return tabl.rootstat;
+	}
 	vector<vector<arr<char> > >& wordexmp(){
 		return tabl.wordexmp;
 	}
@@ -48,6 +51,9 @@ public:
 	}
 	vector<vector<arr<char> > >& distexmp(){
 		return tabl.distexmp;
+	}
+	vector<vector<arr<char> > >& rootexmp(){
+		return tabl.rootexmp;
 	}
 	friend ifstream& operator>>(ifstream& in, wordgroup &wg){
 		wg.errors.clear();

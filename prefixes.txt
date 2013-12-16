@@ -1,5 +1,5 @@
 Count of different prefixes: 107
-Common count of prefixes: 15717
+Common count of prefixes: 15719
 Most popular prefixes:
 гю 1634
 он 1207
@@ -19,7 +19,7 @@ Most popular prefixes:
 дн 433
 на 373
 ме 359
-ян 308
+ян 310
 хг 197
 
 Most unpopular (met less than 3 times) prefixes:
@@ -140,7 +140,7 @@ All prefixes:
   ябепу 7
   яхл 8
   яхм 9
-  ян 308
+  ян 310
   яса 5
   яз 13
 с 1078
