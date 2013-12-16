@@ -46,8 +46,10 @@ void printstat(ofstream &out, const char* name, const arr<int> &stat, const vect
 arr<char> cur_suff(MAX_WORD_WIDTH);
 string dict_key[5000];
 int dict_val[5000];
+int dict_depth[5000];
 int order[5000];
 int dict_size = 0;
+int depth = 0;
 
 void make_dict(node* cur){
 	if (cur == NULL){
@@ -56,11 +58,14 @@ void make_dict(node* cur){
 	if (cur->count != 0){ //cur->adjletters.size() == 0){
 		dict_key[dict_size] = cur_suff.toString();
 		dict_val[dict_size] = cur->count;
+		dict_depth[dict_size] = depth;
 		dict_size++;
 	}
 	for (int i = 0; i < (int)cur->adjletters.size(); i++){
 		cur_suff.add(cur->adjletters[i]);
+		if (cur->count != 0) depth++;
 		make_dict(cur -> adj[i]);
+		if (cur->count != 0) depth--;
 		cur_suff.size = cur_suff.size - 1;
 	}
 }
@@ -72,10 +77,12 @@ bool lexic(int i, int j){
 	return (dict_key[i] < dict_key[j]);
 }
 
-void print_morfemes(const char* filename, node* header, const char* morphem_name = "morphem"){
+void print_morfemes(const char* filename, node* header, const char* morphem_name = "morphem", bool unpopular = 0){
 	ofstream tree_out;
 	tree_out.open(filename);
 	dict_size = 0;
+	if (header->count != 0) 
+		header->count = 0;
 	make_dict(header);
 	int common_count = 0;
 	for (int i = 0; i < dict_size; i++)
@@ -90,11 +97,25 @@ void print_morfemes(const char* filename, node* header, const char* morphem_name
 	for (int i = 0; i < MAX_EXAMPLES; i++)
 		tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << endl;
 	tree_out << endl;
+	if (unpopular) {
+		tree_out << "Most unpopular (met less than 3 times) " << morphem_name << ":" << endl;
+		reverse(order, order + dict_size);
+		for (int i = 0; i < dict_size; i++) {
+			if (dict_val[order[i]] >= 2)
+				break;
+			tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << endl;
+		}
+		tree_out << endl;
+	}
+	tree_out << "All " << morphem_name << ":" << endl;
 	for (int i = 0; i < dict_size; i++)
 		order[i] = i;
 	sort(order, order + dict_size, lexic);
-	for (int i = 0; i < dict_size; i++)
+	for (int i = 0; i < dict_size; i++) {
+		if (dict_depth[order[i]] != 0) 
+			tree_out << setw(dict_depth[order[i]] * 2) << ' ';
 		tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << endl;
+	}
 	tree_out.close();
 }
 
@@ -173,9 +194,9 @@ int main(int argc, char* argv[]){
 	in.close();
 	out.close();
 	
-	print_morfemes("suffixes.txt", strinfile::suffixtree.header, "suffixes");
-	print_morfemes("prefixes.txt", strinfile::prefixtree.header, "prefixes");
-	print_morfemes("roots.txt", strinfile::roottree.header, "roots");
+	print_morfemes("suffixes.txt", strinfile::suffixtree.header, "suffixes", 1);
+	print_morfemes("prefixes.txt", strinfile::prefixtree.header, "prefixes", 1);
+	print_morfemes("roots.txt", strinfile::roottree.header, "roots", 0);
 
 //	cout << " Done.\n\nStatistics:\n\n";
 
