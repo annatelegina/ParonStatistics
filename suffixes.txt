@@ -1,5 +1,5 @@
-Count of different suffixes: 361
-Common count of suffixes: 28587
+Count of different suffixes: 360
+Common count of suffixes: 28588
 Most popular suffixes:
 м 3012
 яъ 2428
@@ -9,7 +9,7 @@ Most popular suffixes:
 хб 1171
 няр 1059
 емх 843
-ючы 740
+ючы 741
 юмх 664
 хбь 607
 хп 586
@@ -76,7 +76,6 @@ Most unpopular (met less than 3 times) suffixes:
 нярэ 1
 нрм 1
 нвм 1
-оебь 1
 рек 1
 рхб 1
 рся 1
@@ -147,7 +146,7 @@ All suffixes:
   юв 32
   юь 6
   юы 50
-  ючы 740
+  ючы 741
   юъ 128
 а 28
   ахы 4
@@ -167,7 +166,7 @@ All suffixes:
     ебю 3
     ебк 7
     ебм 1
-    ебь 114
+    ебь 115
   ед 9
   ее 1
   еф 12
@@ -342,7 +341,6 @@ All suffixes:
   нь 14
   ны 4
   нър 2
-оебь 1
 пхя 4
 я 3
   яхб 2
