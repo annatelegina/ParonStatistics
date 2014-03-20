@@ -1,8 +1,9 @@
 #pragma once
 #include <fstream>
+#include <cstring>
+#include <iostream>
 #include "searchtree.h"
 #include "array.h"
-using namespace std;
 
 class strinfile{
 public:
@@ -19,7 +20,7 @@ public:
 	arr<char> root;
 
 	strinfile(): word(40), pref(10), suff(10), root(40), omon('\0'){}
-	friend ifstream& operator>>(ifstream& in, strinfile &str){
+	friend std::ifstream& operator>>(std::ifstream& in, strinfile &str){
 		char sign = in.get();
 		in.getline(str.filecodes,8);
 		in.clear();
@@ -53,9 +54,10 @@ public:
 					char gg[100];
 					gg[0] = sign;
 					gg[1] = '\0';
-					strcat_s(gg,99, str.filecodes);
-					strcat_s(gg,99, str.fileword);
-					throw gg;
+					std::strcat(gg, str.filecodes);
+					std::strcat(gg, str.fileword);
+					std::cerr << gg << std::endl;
+          throw gg;
 				}
 				++i;
 			}
@@ -92,8 +94,8 @@ public:
 					char gg[100];
 					gg[0] = sign;
 					gg[1] = '\0';
-					strcat_s(gg, 99, str.filecodes);
-					strcat_s(gg, 99, str.fileword);
+					std::strcat(gg, str.filecodes);
+					std::strcat(gg, str.fileword);
 					throw gg;
 				}
 				++i;
@@ -125,8 +127,8 @@ public:
 			char gg[100];
 			gg[0] = sign;
 			gg[1] = '\0';
-			strcat_s(gg, 99, str.filecodes);
-			strcat_s(gg, 99, str.fileword);
+			std::strcat(gg, str.filecodes);
+			std::strcat(gg, str.fileword);
 			throw gg;
 		}
 		return in;

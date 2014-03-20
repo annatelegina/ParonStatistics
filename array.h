@@ -1,6 +1,7 @@
 #pragma once
 #include <fstream>
-using namespace std;
+#include <ostream>
+#include <cstring>
 
 template <class T> class arr{
 	T* ar;
@@ -30,7 +31,7 @@ public:
 		}
 		return ar[i];
 	}
-	explicit arr<T> (const arr<T> &ar1):maxlen(ar1.maxlen), size(ar1.size){
+	arr<T> (const arr<T> &ar1):maxlen(ar1.maxlen), size(ar1.size){
 		ar = new T[ar1.maxlen];
 		memcpy(ar, ar1.ar, sizeof(T) * ar1.size);		
 	}
@@ -45,20 +46,23 @@ public:
 	void reset(){
 		size = 0;
 	}
-	friend ostream& operator<< <>(ostream &out, const arr<T> &ar); 
 
-	string toString(){
+	std::string toString(){
 		char* str = new char[this->size + 1];
-		string s;
+		std::string s;
 		memcpy(str, this->ar, this->size * sizeof(char));
 		str[this->size] = '\0';
-		s = string(str);
+		s = std::string(str);
 		delete[] str;
 		return s;
 	}
+  
+  template <class oT>
+  friend std::ostream& operator<<(std::ostream& out, const arr<oT>& ar); 
 };
 
-template <class T> ostream& operator<<(ostream &out, const arr<T> &ar){
+template <class T> 
+std::ostream& operator<<(std::ostream& out, const arr<T>& ar){
 	char* str = new char[ar.size + 1];
 	memcpy(str, ar.ar, ar.size * sizeof(char));
 	str[ar.size] = '\0';
