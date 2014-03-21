@@ -8,15 +8,18 @@ struct node{
 	vector<node*> adj;
 	int code;
 	int count;
+  
 	node(){
 		code = -1;
 		count = 0;
 	}
+  
 	~node(){
 		for (int i = 0; i < (int)adj.size(); ++i){
 			delete adj[i];
 		}
 	}
+  
 	node* addNext(char c){
 		for (int i = 0; i < (int)adjletters.size(); ++i){
 			if (adjletters[i] == c)
@@ -27,6 +30,7 @@ struct node{
 		adj.push_back(newnode);
 		return newnode;
 	}
+  
 };
 
 class searchtree{
@@ -40,9 +44,11 @@ public:
 		iter = header;
 		currcode = 0;
 	}
+  
 	~searchtree(){
 		delete header;
 	}
+  
 	int addWord(char* str){
 		node* iter;
 		iter = header;
@@ -56,9 +62,11 @@ public:
 		}
 		return iter->code;
 	}
+  
 	void addLetter(char c){
 		iter = iter->addNext(c);
 	}
+  
 	int getCode(){
 		iter->count++;
 		if (iter->code == -1){
@@ -69,4 +77,5 @@ public:
 		iter = header;
 		return res;
 	}
+  
 };

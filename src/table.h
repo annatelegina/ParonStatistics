@@ -1,6 +1,6 @@
 #pragma once
 #include "distance.h"
-#include "strinfile.h"
+#include "stringfile.h"
 #include <string>
 #include <iostream>
 
@@ -46,7 +46,7 @@ public:
 		wordstat.reset();
 		diststat.reset();
 		rootstat.reset();
-		cnt = 0;
+		//cnt = 0;
 	}
 	~table(){
 		for (int i = 0; i < maxsize; ++i){
@@ -65,7 +65,7 @@ public:
 		else
 			return 0;
 	}
-	int cnt;
+	//int cnt;
 	void rewrite(const arr<strinfile> &ar){
 		size = ar.size;
 		words += size;

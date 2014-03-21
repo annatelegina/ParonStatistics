@@ -1,9 +1,9 @@
 #pragma once
-#include "table.h"
 #include <fstream>
 #include <iomanip>
 #include <vector>
-using namespace std;
+#include "table.h"
+#include "criteria.hpp"
 
 class wordgroup{
 	const int maxgr;
@@ -55,7 +55,7 @@ public:
 	vector<vector<arr<char> > >& rootexmp(){
 		return tabl.rootexmp;
 	}
-	friend ifstream& operator>>(ifstream& in, wordgroup &wg){
+	friend std::ifstream& operator>>(std::ifstream& in, wordgroup &wg){
 		wg.errors.clear();
 		wg.strs.reset();
 		int i=0;
@@ -75,31 +75,32 @@ public:
 		wg.tabl.rewrite(wg.strs);
 		return in;
 	}
-	friend ofstream& operator<<(ofstream& out, const wordgroup &wg){
-		for (int i = 0; i < wg.strs.size; ++i){
-			const strinfile &s = wg.strs[i];
+	void PrintByCriteria(std::ofstream& out, Criteria* crit) const {
+		for (int i = 0; i < this->strs.size; ++i){
+			const strinfile &s = this->strs[i];
 			out << "+ " << s.filecodes[1] << ' ';
-			for (int w=0; w < 2; ++w){
+			for (int w = 0; w < 2; ++w){
 				out << "0 ";
 			}
 			out << s.word;
 			if (s.omon!='\0')
 				out << s.omon;
 			out << endl;
-			for (int j = 0; j < wg.strs.size; ++j){
+			for (int j = 0; j < this->strs.size; ++j){
 				if (j != i){
-					const strinfile &s2 = wg.strs[j];
-					out << "- " << s2.filecodes[1] << ' ';
-					for (int w = 0; w < 2; ++w){
-						out << wg.tabl(i,j,w) << ' ';
-					}
-					out << s2.word;
-					if (s2.omon!='\0')
-						out << s2.omon;
-					out << endl;
+					const strinfile &s2 = this->strs[j];
+          if (crit->AreParonyms(s, s2)) {
+            out << "- " << s2.filecodes[1] << ' ';
+            for (int w = 0; w < 2; ++w){
+              out << this->tabl(i,j,w) << ' ';
+            }
+            out << s2.word;
+            if (s2.omon!='\0')
+              out << s2.omon;
+            out << endl;
+          }
 				}
 			}
 		}
-		return out;
 	}
 };

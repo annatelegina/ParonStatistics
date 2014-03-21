@@ -1,11 +1,11 @@
 #include "distance.h"
-#include "strinfile.h"
+#include "stringfile.h"
 #include "wordgroup.h"
 #include <fstream>
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
-#include "wingetopt.h"
+#include <wingetopt.h>
 using namespace std;
 
 int MAX_EXAMPLES = 0;
@@ -189,7 +189,7 @@ int main(int argc, char* argv[]){
 		for (int i = 0; i < (int)wg.errors.size(); ++i){
 			errors.push_back(wg.errors[i]);
 		}
-		out << wg;
+    wg.PrintByCriteria(out, new AffixesCriteria());
 	}
 	in.close();
 	out.close();

@@ -20,6 +20,7 @@ public:
 	arr<char> root;
 
 	strinfile(): word(40), pref(10), suff(10), root(40), omon('\0'){}
+  
 	friend std::ifstream& operator>>(std::ifstream& in, strinfile &str){
 		char sign = in.get();
 		in.getline(str.filecodes,8);
@@ -134,8 +135,3 @@ public:
 		return in;
 	}
 };
-
-
-searchtree strinfile::prefixtree;
-searchtree strinfile::suffixtree;
-searchtree strinfile::roottree;

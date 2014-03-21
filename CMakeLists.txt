@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 
-set(SOURCE main.cpp )
-set(HEADER array.h distance.h searchtree.h strinfile.h table.h wordgroup.h)
+file(GLOB_RECURSE SOURCE src/*.cpp)
 
-set(SOURCE_LIB wingetopt.c wingetopt.h)
+set(SOURCE_LIB lib/wingetopt.c)
 
-add_library(foo STATIC ${SOURCE_LIB})
+include_directories(lib)
 
-add_executable(main ${SOURCE} ${HEADER})
+add_library(wingetopt STATIC ${SOURCE_LIB})
+
+add_executable(main ${SOURCE})
