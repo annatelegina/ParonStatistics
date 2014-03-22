@@ -182,6 +182,7 @@ int main(int argc, char* argv[]){
 		cerr << "Wrong output file!\n";
 		return 1;
 	}
+  ofstream experiment("experiment.txt");
 	vector<const char*> errors;
 	wordgroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES);
 	while (in.peek() != EOF){
@@ -190,9 +191,11 @@ int main(int argc, char* argv[]){
 			errors.push_back(wg.errors[i]);
 		}
     wg.PrintByCriteria(out, new AffixesCriteria());
+    wg.PrintByCriteria(experiment, new LettersPermutationCriteria());
 	}
 	in.close();
 	out.close();
+  experiment.close();
 	
 	print_morfemes("suffixes.txt", strinfile::suffixtree.header, "suffixes", 1);
 	print_morfemes("prefixes.txt", strinfile::prefixtree.header, "prefixes", 1);
@@ -283,7 +286,6 @@ int main(int argc, char* argv[]){
 		}
 	}
 
-	cout << "Press enter to quit...";
-	getchar();
+	cout << "Building a dictionary completed.\n";
 	return 0;
 }
