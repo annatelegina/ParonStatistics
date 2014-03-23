@@ -1,50 +1,50 @@
-#include "distance.h"
-#include "stringfile.h"
-#include "wordgroup.h"
 #include <fstream>
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
 #include <wingetopt.h>
-using namespace std;
+
+#include "distance.hpp"
+#include "stringfile.hpp"
+#include "wordgroup.hpp"
 
 int MAX_EXAMPLES = 0;
 int PER_LINE = 10;
 int MAX_WORD_WIDTH = 25;
 
-void printstat(ofstream &out, const char* name, const arr<int> &stat, const vector<vector<arr<char> > > &examples, int width = 10, int max_cnt = 50){
+void printstat(std::ofstream &out, const char* name, const array<int> &stat, const std::vector<std::vector<array<char> > > &examples, int width = 10, int max_cnt = 50){
 	out << name << " statistics:\n\n";
-	int size = min(stat.size, max_cnt);
+	int size = std::min(stat.size, max_cnt);
 	int line_size = (size - 1) / PER_LINE;
 	for (int i = 0; i <= line_size; ++i){
 		for (int j = 0; j < PER_LINE && j < size - PER_LINE * i; ++j){
-			out << setw(width) << j + PER_LINE * i;
+			out << std::setw(width) << j + PER_LINE * i;
 		}
-		out << endl;
+		out << std::endl;
 		for (int j = 0; j < PER_LINE && j < size - PER_LINE * i; ++j){
-			out << setw(width) << stat[j + PER_LINE * i];
+			out << std::setw(width) << stat[j + PER_LINE * i];
 		}
-		out << endl;
+		out << std::endl;
 		for (int k = 0; k < MAX_EXAMPLES; ++k){
 			int skip = 0;
 			for (int j = 0; j < PER_LINE && j < size - PER_LINE * i; ++j){
 				if ((int)examples[j + PER_LINE * i].size() > k) 
-					out << setw(width) << examples[j + PER_LINE * i][k];
+					out << std::setw(width) << examples[j + PER_LINE * i][k];
 				else{
-					out << setw(width) << ' ';
+					out << std::setw(width) << ' ';
 					skip++;
 				}
 			}
-			if (skip == min(PER_LINE, size - PER_LINE * i))
+			if (skip == std::min(PER_LINE, size - PER_LINE * i))
 				break;
-			out << endl;
+			out << std::endl;
 		}
-		out << endl << endl;
+		out << std::endl << std::endl;
 	}
 }
 
-arr<char> cur_suff(MAX_WORD_WIDTH);
-string dict_key[5000];
+array<char> cur_suff(MAX_WORD_WIDTH);
+std::string dict_key[5000];
 int dict_val[5000];
 int dict_depth[5000];
 int order[5000];
@@ -78,7 +78,7 @@ bool lexic(int i, int j){
 }
 
 void print_morfemes(const char* filename, node* header, const char* morphem_name = "morphem", bool unpopular = 0){
-	ofstream tree_out;
+	std::ofstream tree_out;
 	tree_out.open(filename);
 	dict_size = 0;
 	if (header->count != 0) 
@@ -87,34 +87,34 @@ void print_morfemes(const char* filename, node* header, const char* morphem_name
 	int common_count = 0;
 	for (int i = 0; i < dict_size; i++)
 		common_count += dict_val[i];
-	tree_out << "Count of different " << morphem_name << ": "<< dict_size << endl;
-	tree_out << "Common count of " << morphem_name << ": " << common_count << endl;
-	tree_out << "Most popular " << morphem_name << ":" << endl;
+	tree_out << "Count of different " << morphem_name << ": "<< dict_size << std::endl;
+	tree_out << "Common count of " << morphem_name << ": " << common_count << std::endl;
+	tree_out << "Most popular " << morphem_name << ":" << std::endl;
 	for (int i = 0; i < dict_size; i++)
 		order[i] = i;
-	sort(order, order + dict_size, dict_less);
-	reverse(order, order + dict_size);
+	std::sort(order, order + dict_size, dict_less);
+	std::reverse(order, order + dict_size);
 	for (int i = 0; i < MAX_EXAMPLES; i++)
-		tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << endl;
-	tree_out << endl;
+		tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << std::endl;
+	tree_out << std::endl;
 	if (unpopular) {
-		tree_out << "Most unpopular (met less than 3 times) " << morphem_name << ":" << endl;
-		reverse(order, order + dict_size);
+		tree_out << "Most unpopular (met less than 3 times) " << morphem_name << ":" << std::endl;
+		std::reverse(order, order + dict_size);
 		for (int i = 0; i < dict_size; i++) {
 			if (dict_val[order[i]] >= 2)
 				break;
-			tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << endl;
+			tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << std::endl;
 		}
-		tree_out << endl;
+		tree_out << std::endl;
 	}
-	tree_out << "All " << morphem_name << ":" << endl;
+	tree_out << "All " << morphem_name << ":" << std::endl;
 	for (int i = 0; i < dict_size; i++)
 		order[i] = i;
-	sort(order, order + dict_size, lexic);
+	std::sort(order, order + dict_size, lexic);
 	for (int i = 0; i < dict_size; i++) {
 		if (dict_depth[order[i]] != 0) 
-			tree_out << setw(dict_depth[order[i]] * 2) << ' ';
-		tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << endl;
+			tree_out << std::setw(dict_depth[order[i]] * 2) << ' ';
+		tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << std::endl;
 	}
 	tree_out.close();
 }
@@ -151,39 +151,39 @@ int main(int argc, char* argv[]){
 			break;
 		}
 	}
-	//cerr << optind << endl;
+	//std::cerr << optind << std::endl;
 	if (argc - optind - 1 < 3) {
-		cerr << "Not enough input arguments\n";
+		std::cerr << "Not enough input arguments\n";
 		return 1;
 	}
-	ifstream in;
+	std::ifstream in;
 	try {
-//input file open.
+    //input file open.
 		in.open(argv[optind]);
 	} catch(...) {
-		cerr << "Wrong input file!\n";
+		std::cerr << "Wrong input file!\n";
 		return 1;
 	}
 	if (in.fail()){
-		cerr << "Wrong input file!\n";
+		std::cerr << "Wrong input file!\n";
 		return 1;
 	}
-	cout << "Conversion in progress..." << endl;
+	std::cout << "Conversion in progress..." << std::endl;
 
-	ofstream out;
+	std::ofstream out;
 	try {
-//output file open.
+    //output file open.
 		out.open(argv[optind + 1]);
 	} catch(...) {
-		cerr << "Wrong output file!\n";
+		std::cerr << "Wrong output file!\n";
 		return 1;
 	}
 	if (out.fail()){
-		cerr << "Wrong output file!\n";
+		std::cerr << "Wrong output file!\n";
 		return 1;
 	}
-  ofstream experiment("experiment.txt");
-	vector<const char*> errors;
+  std::ofstream experiment("experiment.txt");
+	std::vector<const char*> errors;
 	wordgroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES);
 	while (in.peek() != EOF){
 		in >> wg;
@@ -197,11 +197,11 @@ int main(int argc, char* argv[]){
 	out.close();
   experiment.close();
 	
-	print_morfemes("suffixes.txt", strinfile::suffixtree.header, "suffixes", 1);
-	print_morfemes("prefixes.txt", strinfile::prefixtree.header, "prefixes", 1);
-	print_morfemes("roots.txt", strinfile::roottree.header, "roots", 0);
+	print_morfemes("suffixes.txt", stringfile::suffixtree.header, "suffixes", 1);
+	print_morfemes("prefixes.txt", stringfile::prefixtree.header, "prefixes", 1);
+	print_morfemes("roots.txt", stringfile::roottree.header, "roots", 0);
 
-//	cout << " Done.\n\nStatistics:\n\n";
+  //std::cout << " Done.\n\nStatistics:\n\n";
 
 	int width = 2;
 	int maxwidth = wg.numofwordsstat();
@@ -211,64 +211,64 @@ int main(int argc, char* argv[]){
 	}
 	if (argw || MAX_EXAMPLES > 0) 
 		width = MAX_WORD_WIDTH;
-/*	cout << wg.numofwordsstat() << " words read:\n\n";
-	printstat(cout, "Prefix", wg.prefstat(),width);
-	printstat(cout, "Suffix", wg.suffstat(),width);
-	printstat(cout, "Morphem (prefix+suffix)", wg.morfstat(),width);
-	printstat(cout, "Word", wg.wordstat(),width);
+/*	std::cout << wg.numofwordsstat() << " words read:\n\n";
+	printstat(std::cout, "Prefix", wg.prefstat(),width);
+	printstat(std::cout, "Suffix", wg.suffstat(),width);
+	printstat(std::cout, "Morphem (prefix+suffix)", wg.morfstat(),width);
+	printstat(std::cout, "Word", wg.wordstat(),width);
 */
 	if (argc >= 4) {
-//statistics output file open.
-		ofstream statout;
+    //statistics output file open.
+		std::ofstream statout;
 		bool openerror = false;
 		try {
 			statout.open(argv[optind + 2]);
 		} catch(...) {
-			cerr << "Wrong statictics output file!\n";
+			std::cerr << "Wrong statictics output file!\n";
 			openerror = true;
 			statout.close();
 		}
 		if (statout.fail()){
-			cerr << "Wrong statictics error output file!\n";
+			std::cerr << "Wrong statictics error output file!\n";
 			openerror = true;
 			statout.close();
 		}
 		if (!openerror) {
 			statout << wg.numofwordsstat() << " words read:\n\n";
-			printstat(statout, "Prefix distance", wg.prefstat(), wg.prefexmp(), width);
-			printstat(statout, "Suffix distance", wg.suffstat(), wg.suffexmp(), width);
-			printstat(statout, "Morphemic (prefix+suffix) distance", wg.morfstat(), wg.morfexmp(), width);
-			printstat(statout, "Levenshtein distance", wg.wordstat(), wg.wordexmp(), width);
+			printstat(statout, "Prefix distancee", wg.prefstat(), wg.prefexmp(), width);
+			printstat(statout, "Suffix distancee", wg.suffstat(), wg.suffexmp(), width);
+			printstat(statout, "Morphemic (prefix+suffix) distancee", wg.morfstat(), wg.morfexmp(), width);
+			printstat(statout, "Levenshtein distancee", wg.wordstat(), wg.wordexmp(), width);
 			printstat(statout, "Distortion power", wg.diststat(), wg.distexmp(), width, 15);
-			printstat(statout, "Root Levenshtein distance", wg.rootstat(), wg.rootexmp(), width);
+			printstat(statout, "Root Levenshtein distancee", wg.rootstat(), wg.rootexmp(), width);
 			statout.close();
 		}
 	}
 
 /*	if (errors.empty())
-		cout << "No mistakes found in sourse file\n\n";
+		std::cout << "No mistakes found in sourse file\n\n";
 	else{
-		cout << errors.size() << " mistakes found in sourse file. Following lines were skipped:\n\n";
+		std::cout << errors.size() << " mistakes found in sourse file. Following lines were skipped:\n\n";
 		for (int i=0; i<(int)errors.size(); ++i){
-			cout << errors[i] << endl;
+			std::cout << errors[i] << std::endl;
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 */
 
 	if (argc >= 5) {
-//error output file open.
-		ofstream errout;
+    //error output file open.
+		std::ofstream errout;
 		bool openerror = false;
 		try {
 			errout.open(argv[optind + 3]);
 		} catch(...) {
-			cerr << "Wrong error output file!\n";
+			std::cerr << "Wrong error output file!\n";
 			openerror = true;
 			errout.close();
 		}
 		if (errout.fail()){
-			cerr << "Wrong error output file!\n";
+			std::cerr << "Wrong error output file!\n";
 			openerror = true;
 			errout.close();
 		}
@@ -278,14 +278,14 @@ int main(int argc, char* argv[]){
 			else{
 				errout << errors.size() << " mistakes found in source file. Following lines were skipped:\n\n";
 				for (int i = 0; i < (int)errors.size(); ++i){
-					errout << errors[i] << endl;
+					errout << errors[i] << std::endl;
 				}
-				errout << endl;
+				errout << std::endl;
 			}
 			errout.close();
 		}
 	}
 
-	cout << "Building a dictionary completed.\n";
+	std::cout << "Building a dictionary completed.\n";
 	return 0;
 }

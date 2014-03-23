@@ -1,28 +1,35 @@
 #pragma once
+
 #include <fstream>
 #include <ostream>
 #include <cstring>
 
-template <class T> class arr{
+template <class T>
+class array{
 	T* ar;
 public:
 	int maxlen;
 	int size;
-	explicit arr<T>(int maxlength): maxlen(maxlength), size(0){
+  
+  explicit array<T>(int maxlength): maxlen(maxlength), size(0) {
 		ar = new T[maxlen];
 	}
-	~arr<T>(){
+  
+	~array<T>(){
 		delete [] ar;
 	}
+  
 	void add(const T &elem){
 		ar[size] = elem;
 		++size;
 		if (size > maxlen)
 			throw "not enough memory";
 	}
+  
 	const T& operator[](int i) const{
 		return ar[i];
 	}
+  
 	T& operator[](int i){
 		if (size < i+1){
 			size = i+1;
@@ -31,11 +38,13 @@ public:
 		}
 		return ar[i];
 	}
-	arr<T> (const arr<T> &ar1):maxlen(ar1.maxlen), size(ar1.size){
+  
+	array<T>(const array<T> &ar1) : maxlen(ar1.maxlen), size(ar1.size) {
 		ar = new T[ar1.maxlen];
 		memcpy(ar, ar1.ar, sizeof(T) * ar1.size);		
 	}
-	arr<T>& operator=(const arr<T> &ar1){
+  
+	array<T>& operator=(const array<T> &ar1) {
 		delete[] ar;
 		maxlen = ar1.maxlen;
 		ar = new T[ar1.maxlen];
@@ -43,6 +52,7 @@ public:
 		size = ar1.size;
 		return *this;
 	}
+  
 	void reset(){
 		size = 0;
 	}
@@ -58,11 +68,11 @@ public:
 	}
   
   template <class oT>
-  friend std::ostream& operator<<(std::ostream& out, const arr<oT>& ar); 
+  friend std::ostream& operator<<(std::ostream& out, const array<oT>& ar); 
 };
 
 template <class T> 
-std::ostream& operator<<(std::ostream& out, const arr<T>& ar){
+std::ostream& operator<<(std::ostream& out, const array<T>& ar){
 	char* str = new char[ar.size + 1];
 	memcpy(str, ar.ar, ar.size * sizeof(char));
 	str[ar.size] = '\0';

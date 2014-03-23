@@ -1,15 +1,16 @@
 #pragma once
-#include "stringfile.h"
+
+#include "stringfile.hpp"
 
 class Criteria {
  public:
-  virtual bool AreParonyms(const strinfile& s1, const strinfile& s2) = 0;
+  virtual bool AreParonyms(const stringfile& s1, const stringfile& s2) = 0;
 };
 
 class LettersPermutationCriteria : public Criteria {
-  virtual bool AreParonyms(const strinfile& s1, const strinfile& s2);
+  virtual bool AreParonyms(const stringfile& s1, const stringfile& s2);
 };
 
 class AffixesCriteria : public Criteria {
-  virtual bool AreParonyms(const strinfile& s1, const strinfile& s2);
+  virtual bool AreParonyms(const stringfile& s1, const stringfile& s2);
 };
