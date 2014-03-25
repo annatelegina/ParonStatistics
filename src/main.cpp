@@ -51,7 +51,7 @@ int order[5000];
 int dict_size = 0;
 int depth = 0;
 
-void make_dict(node* cur){
+void make_dict(Node* cur){
 	if (cur == NULL){
 		return;
 	}
@@ -77,7 +77,7 @@ bool lexic(int i, int j){
 	return (dict_key[i] < dict_key[j]);
 }
 
-void print_morfemes(const char* filename, node* header, const char* morphem_name = "morphem", bool unpopular = 0){
+void print_morfemes(const char* filename, Node* header, const char* morphem_name = "morphem", bool unpopular = 0){
 	std::ofstream tree_out;
 	tree_out.open(filename);
 	dict_size = 0;
@@ -130,7 +130,8 @@ void print_morfemes(const char* filename, node* header, const char* morphem_name
 // <error_file> - (optional) path to error output file.
 
 int main(int argc, char* argv[]){
-	setlocale(LC_ALL,"RUSSIAN");
+  setlocale(LC_ALL, "RUSSIAN");
+  //std::locale::global(std::locale("ru_RU.CP1251"));
 	//In main function all file openings are marked with comments.
 	//bool argin = 0, argout = 0, argstat = 0, argerr = 0;
 	bool argw = 0, arge = 0, argl = 0;
@@ -183,23 +184,30 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
   std::ofstream experiment("experiment.txt");
+  std::ofstream all_stream;
 	std::vector<const char*> errors;
-	wordgroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES);
+	WordGroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES);
+  int affixes_pairs = 0, cr1b3e_pairs = 0, all_pairs = 0;
 	while (in.peek() != EOF){
 		in >> wg;
 		for (int i = 0; i < (int)wg.errors.size(); ++i){
 			errors.push_back(wg.errors[i]);
 		}
-    wg.PrintByCriteria(out, new AffixesCriteria());
-    wg.PrintByCriteria(experiment, new LettersPermutationCriteria());
+    affixes_pairs += wg.PrintByCriteria(out, new AffixesCriteria());
+    cr1b3e_pairs += wg.PrintByCriteria(experiment, new LettersPermutationCriteria());
+    all_pairs += wg.PrintByCriteria(all_stream, new AllCriteria());
 	}
+  std::cout << "Total number of pairs: " << all_pairs << std::endl;
+  std::cout << "Affixes criteria: " << affixes_pairs << " pairs.\n";
+	std::cout << "1B3E criteria: " << cr1b3e_pairs << " pairs.\n";
 	in.close();
-	out.close();
+  out.close();
   experiment.close();
+  all_stream.close();
 	
-	print_morfemes("suffixes.txt", stringfile::suffixtree.header, "suffixes", 1);
-	print_morfemes("prefixes.txt", stringfile::prefixtree.header, "prefixes", 1);
-	print_morfemes("roots.txt", stringfile::roottree.header, "roots", 0);
+	print_morfemes("suffixes.txt", StringFile::suffixtree.header, "suffixes", 1);
+	print_morfemes("prefixes.txt", StringFile::prefixtree.header, "prefixes", 1);
+	print_morfemes("roots.txt", StringFile::roottree.header, "roots", 0);
 
   //std::cout << " Done.\n\nStatistics:\n\n";
 
@@ -235,12 +243,12 @@ int main(int argc, char* argv[]){
 		}
 		if (!openerror) {
 			statout << wg.numofwordsstat() << " words read:\n\n";
-			printstat(statout, "Prefix distancee", wg.prefstat(), wg.prefexmp(), width);
-			printstat(statout, "Suffix distancee", wg.suffstat(), wg.suffexmp(), width);
-			printstat(statout, "Morphemic (prefix+suffix) distancee", wg.morfstat(), wg.morfexmp(), width);
-			printstat(statout, "Levenshtein distancee", wg.wordstat(), wg.wordexmp(), width);
+			printstat(statout, "Prefix Distancee", wg.prefstat(), wg.prefexmp(), width);
+			printstat(statout, "Suffix Distancee", wg.suffstat(), wg.suffexmp(), width);
+			printstat(statout, "Morphemic (prefix+suffix) Distancee", wg.morfstat(), wg.morfexmp(), width);
+			printstat(statout, "Levenshtein Distancee", wg.wordstat(), wg.wordexmp(), width);
 			printstat(statout, "Distortion power", wg.diststat(), wg.distexmp(), width, 15);
-			printstat(statout, "Root Levenshtein distancee", wg.rootstat(), wg.rootexmp(), width);
+			printstat(statout, "Root Levenshtein Distancee", wg.rootstat(), wg.rootexmp(), width);
 			statout.close();
 		}
 	}

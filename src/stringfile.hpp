@@ -6,11 +6,11 @@
 #include "searchtree.hpp"
 #include "array.hpp"
 
-class stringfile{
+class StringFile{
  public:
-	static searchtree prefixtree;
-	static searchtree suffixtree;
-	static searchtree roottree;
+	static SearchTree prefixtree;
+	static SearchTree suffixtree;
+	static SearchTree roottree;
 
 	char filecodes[8];
 	char fileword[40];
@@ -20,7 +20,7 @@ class stringfile{
 	array<int> suff;
 	array<char> root;
 
-	stringfile();
+	StringFile();
   
-	friend std::ifstream& operator>>(std::ifstream& in, stringfile &str);
+	friend std::ifstream& operator>>(std::ifstream& in, StringFile &str);
 };

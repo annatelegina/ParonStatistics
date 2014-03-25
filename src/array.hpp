@@ -57,7 +57,7 @@ public:
 		size = 0;
 	}
 
-	std::string toString(){
+	std::string toString() const {
 		char* str = new char[this->size + 1];
 		std::string s;
 		memcpy(str, this->ar, this->size * sizeof(char));

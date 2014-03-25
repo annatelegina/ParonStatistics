@@ -2,13 +2,13 @@
 
 #include "array.hpp"
 
-class distance {
+class Distance {
 	int** table;
 	const int MaxN, MaxM;
   
  public:
-  distance(int max);
-  ~distance();
+  Distance(int max);
+  ~Distance();
   
 	template <class T> 
   int operator()(const array<T> &ar1, const array<T> &ar2) {

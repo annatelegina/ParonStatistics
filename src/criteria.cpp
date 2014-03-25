@@ -3,7 +3,7 @@
 #include "criteria.hpp"
 #include "distance.hpp"
 
-bool LettersPermutationCriteria::AreParonyms(const stringfile& s1, const stringfile& s2) {
+bool LettersPermutationCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
   int size1 = s1.word.size;
   int size2 = s2.word.size;
   bool begining = s1.word[0] == s2.word[0];
@@ -14,8 +14,12 @@ bool LettersPermutationCriteria::AreParonyms(const stringfile& s1, const stringf
       ending;
 }
 
-bool AffixesCriteria::AreParonyms(const stringfile& s1, const stringfile& s2) {
-  distance dist(s1.word.maxlen);
+bool AffixesCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
+  Distance dist(s1.word.maxlen);
   return dist(s1.pref, s2.pref) == 0 && dist(s1.suff, s2.suff) <= 3 ||
       dist(s1.pref, s2.pref) == 1 && dist(s1.suff, s2.suff) <= 2;
+}
+
+bool AllCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
+  return true;
 }

@@ -2,26 +2,26 @@
 
 #include <vector>
 
-struct node{
+struct Node{
 	std::vector<char> adjletters;
-	std::vector<node*> adj;
+	std::vector<Node*> adj;
 	int code;
 	int count;
   
-	node();
-  ~node();
-  node* addNext(char c);
+	Node();
+  ~Node();
+  Node* addNext(char c);
 };
 
-class searchtree{
+class SearchTree{
 	int currcode;
-	node *iter;
+	Node *iter;
  
  public:
-	node *header;
+	Node *header;
 
-	searchtree();
-  ~searchtree();
+	SearchTree();
+  ~SearchTree();
 	int addWord(char* str);
 	void addLetter(char c);
   int getCode();

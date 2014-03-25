@@ -1,6 +1,6 @@
 #include "distance.hpp"
 
-distance::distance(int max): MaxN(max), MaxM(max) {
+Distance::Distance(int max): MaxN(max), MaxM(max) {
   table = new int*[MaxN];
   for (int i = 0; i < MaxN; ++i) {
     table[i] = new int[MaxM];
@@ -11,7 +11,7 @@ distance::distance(int max): MaxN(max), MaxM(max) {
   }
 }
 
-distance::~distance(){
+Distance::~Distance(){
   for (int i=0; i<MaxN; ++i)
     delete [] table[i];
   delete [] table;

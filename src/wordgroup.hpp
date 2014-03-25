@@ -6,16 +6,17 @@
 #include "table.hpp"
 #include "criteria.hpp"
 
-class wordgroup{
+class WordGroup{
 	const int maxgr;
-	array<stringfile> strs;
-	table tabl;
+  const int maxdist;
+	array<StringFile> strs;
+	Table table;
   
  public:
 	std::vector<const char*> errors;
 	
-  explicit wordgroup(int maxgroup, int maxdist, int maxexamples);
-  ~wordgroup();
+  explicit WordGroup(int maxgroup, int maxdist, int maxexamples);
+  ~WordGroup();
   int numofwordsstat();
   array<int>& wordstat();
   array<int>& prefstat();
@@ -29,7 +30,7 @@ class wordgroup{
   std::vector<std::vector<array<char> > >& morfexmp();
   std::vector<std::vector<array<char> > >& distexmp();
   std::vector<std::vector<array<char> > >& rootexmp();
-  void PrintByCriteria(std::ofstream& out, Criteria* crit) const;
+  int PrintByCriteria(std::ofstream& out, Criteria* crit) const;
   
-  friend std::ifstream& operator>>(std::ifstream& in, wordgroup& wg);
+  friend std::ifstream& operator>>(std::ifstream& in, WordGroup& wg);
 };

@@ -1,6 +1,6 @@
 #include "table.hpp"
 
-table::table(int maxsiz, int maxdist, int maxexamples): maxexmp(maxexamples), maxsize(maxsiz), dist(maxdist), 
+Table::Table(int maxsiz, int maxdist, int maxexamples): maxexmp(maxexamples), maxsize(maxsiz), dist(maxdist), 
 		wordstat(maxdist), prefstat(10), suffstat(10), morfstat(20), words(0), diststat(40), rootstat(10),
 		prefexmp(20), suffexmp(10), morfexmp(20), wordexmp(maxdist), distexmp(40), rootexmp(10)
 {
@@ -33,7 +33,7 @@ table::table(int maxsiz, int maxdist, int maxexamples): maxexmp(maxexamples), ma
   rootstat.reset();
 }
 
-table::~table() {
+Table::~Table() {
   for (int i = 0; i < maxsize; ++i) {
     for (int j = 0; j < i; ++j) {
       delete[] tab[i][j];
@@ -43,7 +43,7 @@ table::~table() {
   delete [] tab;
 }
 
-int table::operator()(int i, int j, int k) const {
+int Table::operator()(int i, int j, int k) const {
   if (i > j)
     return tab[i][j][k];
   else if (i < j)
@@ -52,26 +52,20 @@ int table::operator()(int i, int j, int k) const {
     return 0;
 }
 
-void table::rewrite(const array<stringfile> &ar) {
+void Table::rewrite(const array<StringFile> &ar) {
   size = ar.size;
   words += size;
-  int* meanings = new int[size];
-  for (int i = 0; i < size; ++i)
-    meanings[i] = 0;
   for (int i = 0; i < size; ++i) {
-    const stringfile &s1 = ar[i];
-    if (i > 0 && dist(ar[i].word, ar[i - 1].word) == 0) {
-      meanings[i] = 1;
+    const StringFile &s1 = ar[i];
+    if (s1.omon != '\0' && s1.omon != '1')
       continue;
-    }
     for (int j = 0; j < i; ++j) {
-      const stringfile &s2 = ar[j];
-      if (meanings[j])
+      const StringFile &s2 = ar[j];
+      if (s1.omon != '\0' && s1.omon != '1')
         continue;
       int dist12 = dist(s1.word, s2.word);
       if (dist12 == 0) {
-        meanings[i] = 1;
-        std::cerr << "Your file is not sorted " << s1.word << " " << s2.word << std::endl;
+        std::cerr << "Double words: " << s1.word.toString() << " " << s2.word.toString() << std::endl;
         continue;
       }
       /*if (cnt < 20) {
@@ -99,7 +93,6 @@ void table::rewrite(const array<stringfile> &ar) {
         if ((int)distexmp[distortion].size() < maxexmp) {
           distexmp[distortion].push_back(s1.word);
           distexmp[distortion].push_back(s2.word);
-          //std::cerr << distortion << ' ' << (double) dist12 / (s1.word.size * s2.word.size) << std::endl;
         }
         int dist_root = dist(s1.root, s2.root);
         ++rootstat[dist_root];
@@ -130,5 +123,4 @@ void table::rewrite(const array<stringfile> &ar) {
       }
     }
   }
-  delete[] meanings;
 }

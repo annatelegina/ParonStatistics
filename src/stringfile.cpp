@@ -1,12 +1,12 @@
 #include "stringfile.hpp"
 
-stringfile::stringfile(): word(40), pref(10), suff(10), root(40), omon('\0') {}
+StringFile::StringFile(): word(40), pref(10), suff(10), root(40), omon('\0') {}
 
-searchtree stringfile::prefixtree;
-searchtree stringfile::suffixtree;
-searchtree stringfile::roottree;
+SearchTree StringFile::prefixtree;
+SearchTree StringFile::suffixtree;
+SearchTree StringFile::roottree;
 
-std::ifstream& operator>>(std::ifstream& in, stringfile &str) {
+std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
   char sign = in.get();
   in.getline(str.filecodes,8);
   in.clear();
@@ -31,12 +31,12 @@ std::ifstream& operator>>(std::ifstream& in, stringfile &str) {
     while (true) {
       char &c = str.fileword[i];
       if (c >= 'À' && c <= 'ß') {
-        stringfile::prefixtree.addLetter(c);
+        StringFile::prefixtree.addLetter(c);
         str.word.add(c);
       } else if (c == '-'){
-        str.pref.add(stringfile::prefixtree.getCode());
+        str.pref.add(StringFile::prefixtree.getCode());
       } else if (c == '+'){
-        str.pref.add(stringfile::prefixtree.getCode());
+        str.pref.add(StringFile::prefixtree.getCode());
         break;
       } else {
         char gg[100];
@@ -54,12 +54,12 @@ std::ifstream& operator>>(std::ifstream& in, stringfile &str) {
   //root
   while (str.fileword[i] >= 'À' && str.fileword[i] <= 'ß') {
     char &c = str.fileword[i];
-    stringfile::roottree.addLetter(c);
+    StringFile::roottree.addLetter(c);
     str.word.add(c);
     str.root.add(c);
     ++i;
   }
-  stringfile::roottree.getCode();
+  StringFile::roottree.getCode();
   //suffixes
   if (str.fileword[i] == '-')
     ++i;
@@ -72,12 +72,12 @@ std::ifstream& operator>>(std::ifstream& in, stringfile &str) {
     while (true){
       char &c = str.fileword[i];
       if (c >= 'À' && c <= 'ß'){
-        stringfile::suffixtree.addLetter(c);
+        StringFile::suffixtree.addLetter(c);
         str.word.add(c);
       } else if (c == '-'){
-        str.suff.add(stringfile::suffixtree.getCode());
+        str.suff.add(StringFile::suffixtree.getCode());
       } else if (c == term || (c >= '1' && c <= '9')){
-        str.suff.add(stringfile::suffixtree.getCode());
+        str.suff.add(StringFile::suffixtree.getCode());
         break;
       } else {
         char gg[100];
@@ -100,11 +100,11 @@ std::ifstream& operator>>(std::ifstream& in, stringfile &str) {
     if (str.fileword[i] == '-'){
       ++i;
       while (str.fileword[i] >= 'À' && str.fileword[i] <= 'ß'){
-        stringfile::suffixtree.addLetter(str.fileword[i]);
+        StringFile::suffixtree.addLetter(str.fileword[i]);
         str.word.add(str.fileword[i]);
         ++i;
       }
-      str.suff.add(stringfile::suffixtree.getCode());
+      str.suff.add(StringFile::suffixtree.getCode());
     }
   }
   //meaning

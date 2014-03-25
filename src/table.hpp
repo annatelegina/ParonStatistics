@@ -7,9 +7,9 @@
 #include "distance.hpp"
 #include "stringfile.hpp"
 
-class table{
-	distance dist;
-	//Maximal size of wordgroup
+class Table{
+	Distance dist;
+	//Maximal size of WordGroup
 	const int maxsize;
 	const int maxexmp;
 	int ***tab;
@@ -19,8 +19,8 @@ public:
 	int words;
 	int size;
   
-	table(int maxsiz, int maxdist, int maxexamples);
-	~table();
+	Table(int maxsiz, int maxdist, int maxexamples);
+	~Table();
 	int operator()(int i, int j, int k) const;
-	void rewrite(const array<stringfile> &ar);
+	void rewrite(const array<StringFile> &ar);
 };

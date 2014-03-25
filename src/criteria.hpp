@@ -4,13 +4,17 @@
 
 class Criteria {
  public:
-  virtual bool AreParonyms(const stringfile& s1, const stringfile& s2) = 0;
+  virtual bool AreParonyms(const StringFile& s1, const StringFile& s2) = 0;
 };
 
 class LettersPermutationCriteria : public Criteria {
-  virtual bool AreParonyms(const stringfile& s1, const stringfile& s2);
+  virtual bool AreParonyms(const StringFile& s1, const StringFile& s2);
 };
 
 class AffixesCriteria : public Criteria {
-  virtual bool AreParonyms(const stringfile& s1, const stringfile& s2);
+  virtual bool AreParonyms(const StringFile& s1, const StringFile& s2);
+};
+
+class AllCriteria : public Criteria {
+  virtual bool AreParonyms(const StringFile& s1, const StringFile& s2);
 };

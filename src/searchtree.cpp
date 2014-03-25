@@ -2,40 +2,40 @@
 
 #include "searchtree.hpp"
 
-node::node(){
+Node::Node(){
   code = -1;
   count = 0;
 }
 
-node::~node(){
+Node::~Node(){
   for (int i = 0; i < (int)adj.size(); ++i) {
     delete adj[i];
   }
 }
 
-node* node::addNext(char c) {
+Node* Node::addNext(char c) {
   for (int i = 0; i < (int)adjletters.size(); ++i) {
     if (adjletters[i] == c)
       return adj[i];
   }
   adjletters.push_back(c);
-  node* newnode = new node();
-  adj.push_back(newnode);
-  return newnode;
+  Node* newNode = new Node();
+  adj.push_back(newNode);
+  return newNode;
 }
 
-searchtree::searchtree() {
-  header = new node;
+SearchTree::SearchTree() {
+  header = new Node;
   iter = header;
   currcode = 0;
 }
 
-searchtree::~searchtree() {
+SearchTree::~SearchTree() {
   delete header;
 }
 
-int searchtree::addWord(char* str) {
-  node* iter;
+int SearchTree::addWord(char* str) {
+  Node* iter;
   iter = header;
   for (int i = 0; i < (int)strlen(str); i++){
     iter = iter->addNext(str[i]);
@@ -48,11 +48,11 @@ int searchtree::addWord(char* str) {
   return iter->code;
 }
 
-void searchtree::addLetter(char c) {
+void SearchTree::addLetter(char c) {
   iter = iter->addNext(c);
 }
 
-int searchtree::getCode(){
+int SearchTree::getCode(){
   iter->count++;
   if (iter->code == -1){
     iter->code = currcode;

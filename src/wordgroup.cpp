@@ -1,100 +1,110 @@
 #include "wordgroup.hpp"
 
-wordgroup::wordgroup(int maxgroup, int maxdist, int maxexamples): maxgr(maxgroup), 
-    strs(maxgr), tabl(maxgr, maxdist, maxexamples) {}
+WordGroup::WordGroup(int maxgroup, int maxdist, int maxexamples): maxdist(maxdist), 
+    maxgr(maxgroup), strs(maxgr), table(maxgr, maxdist, maxexamples) {}
 
-wordgroup::~wordgroup() {
+WordGroup::~WordGroup() {
   for (int i=0; i<(int)errors.size(); ++i)
     delete [] errors[i];
 }
 
-int wordgroup::numofwordsstat() {
-  return tabl.words;
+int WordGroup::numofwordsstat() {
+  return table.words;
 }
 
-array<int>& wordgroup::wordstat() {
-  return tabl.wordstat;
+array<int>& WordGroup::wordstat() {
+  return table.wordstat;
 }
 
-array<int>& wordgroup::prefstat() {
-  return tabl.prefstat;
+array<int>& WordGroup::prefstat() {
+  return table.prefstat;
 }
 
-array<int>& wordgroup::suffstat() {
-  return tabl.suffstat;
+array<int>& WordGroup::suffstat() {
+  return table.suffstat;
 }
 
-array<int>& wordgroup::morfstat() {
-  return tabl.morfstat;
+array<int>& WordGroup::morfstat() {
+  return table.morfstat;
 }
 
-array<int>& wordgroup::diststat() {
-  return tabl.diststat;
+array<int>& WordGroup::diststat() {
+  return table.diststat;
 }
 
-array<int>& wordgroup::rootstat() {
-  return tabl.rootstat;
+array<int>& WordGroup::rootstat() {
+  return table.rootstat;
 }
 
-std::vector<std::vector<array<char> > >& wordgroup::wordexmp() {
-  return tabl.wordexmp;
+std::vector<std::vector<array<char> > >& WordGroup::wordexmp() {
+  return table.wordexmp;
 }
 
-std::vector<std::vector<array<char> > >& wordgroup::prefexmp() {
-  return tabl.prefexmp;
+std::vector<std::vector<array<char> > >& WordGroup::prefexmp() {
+  return table.prefexmp;
 }
 
-std::vector<std::vector<array<char> > >& wordgroup::suffexmp() {
-  return tabl.suffexmp;
+std::vector<std::vector<array<char> > >& WordGroup::suffexmp() {
+  return table.suffexmp;
 }
 
-std::vector<std::vector<array<char> > >& wordgroup::morfexmp() {
-  return tabl.morfexmp;
+std::vector<std::vector<array<char> > >& WordGroup::morfexmp() {
+  return table.morfexmp;
 }
 
-std::vector<std::vector<array<char> > >& wordgroup::distexmp() {
-  return tabl.distexmp;
+std::vector<std::vector<array<char> > >& WordGroup::distexmp() {
+  return table.distexmp;
 }
 
-std::vector<std::vector<array<char> > >& wordgroup::rootexmp() {
-  return tabl.rootexmp;
+std::vector<std::vector<array<char> > >& WordGroup::rootexmp() {
+  return table.rootexmp;
 }
 
-void wordgroup::PrintByCriteria(std::ofstream& out, Criteria* crit) const {
+int WordGroup::PrintByCriteria(std::ofstream& out, Criteria* crit) const {
+  Distance dist(maxdist);
+  int paron_pairs = 0;
   for (int i = 0; i < this->strs.size; ++i){
-    const stringfile &s = this->strs[i];
-    out << "+ " << s.filecodes[1] << ' ';
+    const StringFile &s1 = this->strs[i];
+    if (s1.omon != '\0' && s1.omon != '1')
+      continue;
+    out << "+ " << s1.filecodes[1] << ' ';
     for (int w = 0; w < 2; ++w) {
       out << "0 ";
     }
-    out << s.word;
-    if (s.omon!='\0')
-      out << s.omon;
+    out << s1.word;
+    /*if (s1.omon != '\0')
+      out << s1.omon;*/
     out << std::endl;
     for (int j = 0; j < this->strs.size; ++j) {
       if (j != i) {
-        const stringfile &s2 = this->strs[j];
-        if (crit->AreParonyms(s, s2)) {
-          out << "- " << s2.filecodes[1] << ' ';
-          for (int w = 0; w < 2; ++w) {
-            out << this->tabl(i,j,w) << ' ';
+        const StringFile &s2 = this->strs[j];
+        if (s2.omon != '\0' && s2.omon != '1')
+          continue;
+        if (dist(s1.word, s2.word) != 0) {
+          if (crit->AreParonyms(s1, s2)) {
+            paron_pairs++;
+            out << "- " << s2.filecodes[1] << ' ';
+            for (int w = 0; w < 2; ++w) {
+              out << this->table(i,j,w) << ' ';
+            }
+            out << s2.word;
+            /*if (s2.omon != '\0')
+              out << s2.omon;*/
+            out << std::endl;
           }
-          out << s2.word;
-          if (s2.omon!='\0')
-            out << s2.omon;
-          out << std::endl;
         }
       }
     }
   }
+  return paron_pairs;
 }
 
-std::ifstream& operator>>(std::ifstream& in, wordgroup& wg) {
+std::ifstream& operator>>(std::ifstream& in, WordGroup& wg) {
   wg.errors.clear();
   wg.strs.reset();
   int i = 0;
   do {
-    if (i>=wg.maxgr)
+    if (i >= wg.maxgr)
       throw "not enough memory - too big group";
     try {
       in >> wg.strs[i];
@@ -106,6 +116,6 @@ std::ifstream& operator>>(std::ifstream& in, wordgroup& wg) {
     }
     ++i;
   } while (in.peek() != '+' && in.peek() != EOF);
-  wg.tabl.rewrite(wg.strs);
+  wg.table.rewrite(wg.strs);
   return in;
 }
