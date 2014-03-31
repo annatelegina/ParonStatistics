@@ -49,6 +49,27 @@ int Features::getCommonEnding(const StringFile& s1, const StringFile& s2) {
   return i;
 }
 
+int Features::getLettersDifference(const StringFile& s1, const StringFile& s2) {
+  int size1 = s1.word.size;
+  int size2 = s2.word.size;
+  int ans = 0;
+  int arr1[300], arr2[300];
+  for (int i = 0; i < 300; i++) {
+    arr1[i] = 0;
+    arr2[i] = 0;
+  }
+  for (int i = 0; i < size1; i++) {
+    arr1[(unsigned char) s1.word[i]]++;
+  }
+  for (int i = 0; i < size2; i++) {
+    arr2[(unsigned char) s2.word[i]]++;
+  }
+  for (int i = 0; i < 300; i++) {
+    ans += std::abs(arr1[i] - arr2[i]);
+  }
+  return ans;
+}
+
 int Features::getLengthDifference(const StringFile& s1, const StringFile& s2) {
   return std::abs(s1.word.size - s2.word.size);
 }

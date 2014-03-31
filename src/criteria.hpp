@@ -7,6 +7,10 @@ class Criteria {
   virtual bool AreParonyms(const StringFile& s1, const StringFile& s2) = 0;
 };
 
+class BeginEndingCriteria : public Criteria {
+  virtual bool AreParonyms(const StringFile& s1, const StringFile& s2);
+};
+
 class LettersPermutationCriteria : public Criteria {
   virtual bool AreParonyms(const StringFile& s1, const StringFile& s2);
 };

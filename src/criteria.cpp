@@ -4,13 +4,17 @@
 #include "distance.hpp"
 #include "features.hpp"
 
-bool LettersPermutationCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
+bool BeginEndingCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
   int size1 = s1.word.size;
   int size2 = s2.word.size;
   int begining = Features::getCommonBeginning(s1, s2);
   int ending = Features::getCommonEnding(s1, s2);
   int length = Features::getLengthDifference(s1, s2);
   return length <= 2 && begining >= 1 && ending >= 3;
+}
+
+bool LettersPermutationCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
+  return Features::getLettersDifference(s1, s2) <= 3;
 }
 
 bool AffixesCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {

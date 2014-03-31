@@ -13,5 +13,6 @@ class Features {
   
   static int getCommonBeginning(const StringFile& s1, const StringFile& s2);
   static int getCommonEnding(const StringFile& s1, const StringFile& s2);
+  static int getLettersDifference(const StringFile& s1, const StringFile& s2);
   static int getLengthDifference(const StringFile& s1, const StringFile& s2);
 };

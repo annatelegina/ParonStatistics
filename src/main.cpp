@@ -188,18 +188,21 @@ int main(int argc, char* argv[]){
 	std::vector<const char*> errors;
 	WordGroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES);
   int affixes_pairs = 0, cr1b3e_pairs = 0, all_pairs = 0;
+  int perm_pairs = 0;
 	while (in.peek() != EOF){
 		in >> wg;
 		for (int i = 0; i < (int)wg.errors.size(); ++i){
 			errors.push_back(wg.errors[i]);
 		}
     affixes_pairs += wg.PrintByCriteria(out, new AffixesCriteria());
-    cr1b3e_pairs += wg.PrintByCriteria(experiment, new LettersPermutationCriteria());
+    cr1b3e_pairs += wg.PrintByCriteria(all_stream, new BeginEndingCriteria());
     all_pairs += wg.PrintByCriteria(all_stream, new AllCriteria());
+    perm_pairs += wg.PrintByCriteria(experiment, new LettersPermutationCriteria());
 	}
   std::cout << "Total number of pairs: " << all_pairs << std::endl;
   std::cout << "Affixes criteria: " << affixes_pairs << " pairs.\n";
 	std::cout << "1B3E criteria: " << cr1b3e_pairs << " pairs.\n";
+  std::cout << "Letters permutation criteria: " << perm_pairs << " pairs.\n";
 	in.close();
   out.close();
   experiment.close();
