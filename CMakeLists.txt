@@ -9,3 +9,4 @@ include_directories(lib)
 add_library(wingetopt STATIC ${SOURCE_LIB})
 
 add_executable(main ${SOURCE})
+target_link_libraries(main wingetopt)

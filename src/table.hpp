@@ -13,6 +13,7 @@ class Table{
 	const int maxsize;
 	const int maxexmp;
 	int ***tab;
+  static int wordcount;
 public:
 	array<int> wordstat, prefstat, suffstat, morfstat, diststat, rootstat;
 	std::vector<std::vector<array<char> > > wordexmp, prefexmp, suffexmp, morfexmp, distexmp, rootexmp;

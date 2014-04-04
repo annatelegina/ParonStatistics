@@ -1,7 +1,7 @@
 #include "wordgroup.hpp"
 
 WordGroup::WordGroup(int maxgroup, int maxdist, int maxexamples): maxdist(maxdist), 
-    maxgr(maxgroup), strs(maxgr), table(maxgr, maxdist, maxexamples) {}
+    maxgr(maxgroup), strs(maxgroup), table(maxgroup, maxdist, maxexamples) {}
 
 WordGroup::~WordGroup() {
   for (int i=0; i<(int)errors.size(); ++i)
@@ -80,12 +80,13 @@ int WordGroup::PrintByCriteria(std::ofstream& out, Criteria* crit) const {
         const StringFile &s2 = this->strs[j];
         if (s2.omon != '\0' && s2.omon != '1')
           continue;
-        if (dist(s1.word, s2.word) != 0) {
+        //filecodes[3] - singular/plural
+        if (dist(s1.word, s2.word) != 0 && s1.filecodes[3] == s2.filecodes[3]) { 
           if (crit->AreParonyms(s1, s2)) {
             paron_pairs++;
             out << "- " << s2.filecodes[1] << ' ';
             for (int w = 0; w < 2; ++w) {
-              out << this->table(i,j,w) << ' ';
+              out << this->table(i, j, w) << ' ';
             }
             out << s2.word;
             /*if (s2.omon != '\0')
@@ -96,7 +97,7 @@ int WordGroup::PrintByCriteria(std::ofstream& out, Criteria* crit) const {
       }
     }
   }
-  return paron_pairs;
+  return paron_pairs / 2;
 }
 
 std::ifstream& operator>>(std::ifstream& in, WordGroup& wg) {
@@ -105,7 +106,7 @@ std::ifstream& operator>>(std::ifstream& in, WordGroup& wg) {
   int i = 0;
   do {
     if (i >= wg.maxgr)
-      throw "not enough memory - too big group";
+      std::cerr << "Not enough memory - too big group " << i << ' ' << wg.maxgr << std::endl;
     try {
       in >> wg.strs[i];
     } catch (char* err) {

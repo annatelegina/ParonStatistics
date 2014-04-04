@@ -1,7 +1,7 @@
 #pragma once
 
 #include <fstream>
-#include <ostream>
+#include <iostream>
 #include <cstring>
 
 template <class T>
@@ -23,7 +23,7 @@ public:
 		ar[size] = elem;
 		++size;
 		if (size > maxlen)
-			throw "not enough memory";
+			std::cerr << "Array: not enough memory" << maxlen << ' ' << size << std::endl;
 	}
   
 	const T& operator[](int i) const{
@@ -34,7 +34,7 @@ public:
 		if (size < i+1){
 			size = i+1;
 			if (size > maxlen)
-				throw "not enough memory";
+				std::cerr << "Array: not enough memory " << maxlen << ' ' << size << std::endl;
 		}
 		return ar[i];
 	}

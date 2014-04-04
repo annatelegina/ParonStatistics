@@ -77,7 +77,7 @@ bool lexic(int i, int j){
 	return (dict_key[i] < dict_key[j]);
 }
 
-void print_morfemes(const char* filename, Node* header, const char* morphem_name = "morphem", bool unpopular = 0){
+void print_morfemes(const char* filename, Node* header, const char* morphem_name = "morphem", bool unpopular = 0, int times = 1){
 	std::ofstream tree_out;
 	tree_out.open(filename);
 	dict_size = 0;
@@ -98,10 +98,10 @@ void print_morfemes(const char* filename, Node* header, const char* morphem_name
 		tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << std::endl;
 	tree_out << std::endl;
 	if (unpopular) {
-		tree_out << "Most unpopular (met less than 3 times) " << morphem_name << ":" << std::endl;
+		tree_out << "Most unpopular (met not more than "<< times << " times) " << morphem_name << ":" << std::endl;
 		std::reverse(order, order + dict_size);
 		for (int i = 0; i < dict_size; i++) {
-			if (dict_val[order[i]] >= 2)
+			if (dict_val[order[i]] > times)
 				break;
 			tree_out << dict_key[order[i]] << ' ' << dict_val[order[i]] << std::endl;
 		}
@@ -208,9 +208,9 @@ int main(int argc, char* argv[]){
   experiment.close();
   all_stream.close();
 	
-	print_morfemes("suffixes.txt", StringFile::suffixtree.header, "suffixes", 1);
-	print_morfemes("prefixes.txt", StringFile::prefixtree.header, "prefixes", 1);
-	print_morfemes("roots.txt", StringFile::roottree.header, "roots", 0);
+	print_morfemes("suffixes.txt", StringFile::suffixtree.header, "suffixes", 1, 2);
+	print_morfemes("prefixes.txt", StringFile::prefixtree.header, "prefixes", 1, 1);
+	print_morfemes("roots.txt", StringFile::roottree.header, "roots", 1, 1);
 
   //std::cout << " Done.\n\nStatistics:\n\n";
 
@@ -246,12 +246,12 @@ int main(int argc, char* argv[]){
 		}
 		if (!openerror) {
 			statout << wg.numofwordsstat() << " words read:\n\n";
-			printstat(statout, "Prefix Distancee", wg.prefstat(), wg.prefexmp(), width);
-			printstat(statout, "Suffix Distancee", wg.suffstat(), wg.suffexmp(), width);
-			printstat(statout, "Morphemic (prefix+suffix) Distancee", wg.morfstat(), wg.morfexmp(), width);
-			printstat(statout, "Levenshtein Distancee", wg.wordstat(), wg.wordexmp(), width);
-			printstat(statout, "Distortion power", wg.diststat(), wg.distexmp(), width, 15);
-			printstat(statout, "Root Levenshtein Distancee", wg.rootstat(), wg.rootexmp(), width);
+			printstat(statout, "Prefix Distance", wg.prefstat(), wg.prefexmp(), width);
+			printstat(statout, "Suffix Distance", wg.suffstat(), wg.suffexmp(), width);
+			printstat(statout, "Morphemic (prefix+suffix) Distance", wg.morfstat(), wg.morfexmp(), width);
+			printstat(statout, "Levenshtein Distance", wg.wordstat(), wg.wordexmp(), width);
+			printstat(statout, "Distortion power", wg.diststat(), wg.distexmp(), width);  //,15
+			printstat(statout, "Root Levenshtein Distance", wg.rootstat(), wg.rootexmp(), width);
 			statout.close();
 		}
 	}

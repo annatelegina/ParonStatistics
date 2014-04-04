@@ -8,9 +8,9 @@ SearchTree StringFile::roottree;
 
 std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
   char sign = in.get();
-  in.getline(str.filecodes,8);
+  in.getline(str.filecodes, 8);
   in.clear();
-  in.getline(str.fileword,39);
+  in.getline(str.fileword, 39);
   //CP1251
   for (int i = 0; str.fileword[i] != '\0'; ++i) {
     char &c = str.fileword[i];
@@ -19,6 +19,8 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
     else if (c >- 33 && c <- 16)
       c += 16;
     c = toupper(c);
+    if (c == '\r' || c == '\n')
+      str.fileword[i] = '\0';
   }
   str.word.reset();
   str.pref.reset();
@@ -28,9 +30,10 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
   int i = 0;
   //prefixes
   if (str.fileword[i] != '+') {
+    ++i;
     while (true) {
-      char &c = str.fileword[i];
-      if (c >= 'À' && c <= 'ß') {
+      unsigned char c = str.fileword[i];
+      if (c >= 0xC0 && c <= 0xDF) {
         StringFile::prefixtree.addLetter(c);
         str.word.add(c);
       } else if (c == '-'){
@@ -44,16 +47,16 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
         gg[1] = '\0';
         std::strcat(gg, str.filecodes);
         std::strcat(gg, str.fileword);
-        std::cerr << gg << std::endl;
-        throw gg;
+        std::cerr << "char: " << c << " " << (int) c << " " << std::endl;
+        std::cerr << "Encoding error (prefixes): " << gg << std::endl;
       }
       ++i;
     }
   }
   ++i;
   //root
-  while (str.fileword[i] >= 'À' && str.fileword[i] <= 'ß') {
-    char &c = str.fileword[i];
+  while ((unsigned char) str.fileword[i] >= 0xC0 && (unsigned char) str.fileword[i] <= 0xDF) {
+    char c = str.fileword[i];
     StringFile::roottree.addLetter(c);
     str.word.add(c);
     str.root.add(c);
@@ -70,8 +73,8 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
     term = '*';
   if (str.fileword[i] != term && !(str.fileword[i] >= '1' && str.fileword[i] <= '9')){
     while (true){
-      char &c = str.fileword[i];
-      if (c >= 'À' && c <= 'ß'){
+      unsigned char c = str.fileword[i];
+      if (c >= 0xC0 && c <= 0xDF){
         StringFile::suffixtree.addLetter(c);
         str.word.add(c);
       } else if (c == '-'){
@@ -85,7 +88,8 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
         gg[1] = '\0';
         std::strcat(gg, str.filecodes);
         std::strcat(gg, str.fileword);
-        throw gg;
+        std::cerr << "char: " << c << " " << (int) c << " " << std::endl;
+        std::cerr << "Encoding error (suffixes): " << gg << std::endl;
       }
       ++i;
     }
@@ -93,13 +97,13 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
   //ending
   if (str.filecodes[1] != '4' && str.fileword[i] == '*'){
     ++i;
-    while (str.fileword[i] >= 'À' && str.fileword[i] <= 'ß'){
+    while ((unsigned char) str.fileword[i] >= 0xC0 && (unsigned char) str.fileword[i] <= 0xDF){
       str.word.add(str.fileword[i]);
       ++i;
     }
     if (str.fileword[i] == '-'){
       ++i;
-      while (str.fileword[i] >= 'À' && str.fileword[i] <= 'ß'){
+      while ((unsigned char) str.fileword[i] >= 0xC0 && (unsigned char) str.fileword[i] <= 0xDF){
         StringFile::suffixtree.addLetter(str.fileword[i]);
         str.word.add(str.fileword[i]);
         ++i;
@@ -120,7 +124,8 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
     gg[1] = '\0';
     std::strcat(gg, str.filecodes);
     std::strcat(gg, str.fileword);
-    throw gg;
+    std::cerr << "char: " << str.fileword[i] << " " << (int) str.fileword[i] << " " << std::endl;
+    std::cerr << "Encoding error (line ending): " << gg << std::endl;
   }
   return in;
 }
