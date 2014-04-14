@@ -120,3 +120,7 @@ std::ifstream& operator>>(std::ifstream& in, WordGroup& wg) {
   wg.table.rewrite(wg.strs);
   return in;
 }
+
+const array<StringFile>& WordGroup::getLines() const {
+  return strs;
+}

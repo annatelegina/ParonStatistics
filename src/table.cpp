@@ -20,7 +20,7 @@ Table::Table(int maxsiz, int maxdist, int maxexamples): maxexmp(maxexamples), ma
     suffstat[i] = 0;
   for (int i = 0; i < 20; ++i)
     morfstat[i] = 0;
-  for (int i = 0; i < 40; ++i)
+  for (int i = 0; i < 100; ++i)
     diststat[i] = 0;
   for (int i = 0; i < 10; ++i)
     rootstat[i] = 0;

@@ -1,4 +1,5 @@
 #include <cmath>
+#include <vector>
 
 #include "features.hpp"
 #include "distance.hpp"
@@ -72,4 +73,20 @@ int Features::getLettersDifference(const StringFile& s1, const StringFile& s2) {
 
 int Features::getLengthDifference(const StringFile& s1, const StringFile& s2) {
   return std::abs(s1.word.size - s2.word.size);
+}
+
+std::vector<double> Features::getFeaturesVector(const StringFile& s1, const StringFile& s2) {
+  std::vector<double> features;
+  int max_dist = s1.word.maxlen; //std::max(s1.word.size, s2.word.size);
+  features.push_back(double(getWordDistance(s1, s2)) / max_dist);
+  features.push_back(double(getRootDistance(s1, s2)) / max_dist);
+  features.push_back(double(getPreffixDistance(s1, s2)) / max_dist); //3
+  features.push_back(double(getSuffixDistance(s1, s2)) / max_dist); //6
+  //features.push_back(double(getAffixDistance(s1, s2)) / s1.word.maxlen);
+  features.push_back(getDistortionPower(s1, s2)); // / 0.5
+  features.push_back(double(getCommonBeginning(s1, s2)) / max_dist);
+  features.push_back(double(getCommonEnding(s1, s2)) / max_dist);
+  features.push_back(double(getLettersDifference(s1, s2)) / max_dist);
+  features.push_back(double(getLengthDifference(s1, s2)) / max_dist);
+  return features;
 }

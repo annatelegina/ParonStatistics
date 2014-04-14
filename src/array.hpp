@@ -40,13 +40,13 @@ public:
 	}
   
 	array<T>(const array<T> &ar1) : maxlen(ar1.maxlen), size(ar1.size) {
-		ar = new T[ar1.maxlen];
-		memcpy(ar, ar1.ar, sizeof(T) * ar1.size);		
+    ar = new T[ar1.maxlen];
+		memcpy(ar, ar1.ar, sizeof(T) * ar1.size);
 	}
   
 	array<T>& operator=(const array<T> &ar1) {
 		delete[] ar;
-		maxlen = ar1.maxlen;
+    maxlen = ar1.maxlen;
 		ar = new T[ar1.maxlen];
 		memcpy(ar, ar1.ar, sizeof(T) * ar1.size);
 		size = ar1.size;

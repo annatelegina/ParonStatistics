@@ -31,6 +31,7 @@ class WordGroup{
   std::vector<std::vector<array<char> > >& distexmp();
   std::vector<std::vector<array<char> > >& rootexmp();
   int PrintByCriteria(std::ofstream& out, Criteria* crit) const;
+  const array<StringFile>& getLines() const;
   
   friend std::ifstream& operator>>(std::ifstream& in, WordGroup& wg);
 };

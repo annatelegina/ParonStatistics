@@ -41,8 +41,7 @@ local.properties
 *.user
 *.sln.docstates
 *.zip
-par_*.txt
-experiment.txt
+*.txt
 
 # Build results
 

@@ -1,8 +1,11 @@
 #include <cmath>
+#include <vector>
+#include <iostream>
 
 #include "criteria.hpp"
 #include "distance.hpp"
 #include "features.hpp"
+#include "classifier.hpp"
 
 bool BeginEndingCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
   int size1 = s1.word.size;
@@ -26,4 +29,13 @@ bool AffixesCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
 
 bool AllCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
   return true;
+}
+
+ClassifierCriteria::ClassifierCriteria(const Classifier& classifier) : classifier(classifier) {}
+
+bool ClassifierCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
+  std::vector<double> features = Features::getFeaturesVector(s1, s2);
+  double probability = classifier.GetProbability(features);
+  //std::cerr << s1.word << ' ' << s2.word << ' ' << probability << std::endl;
+  return probability > 0.5;
 }

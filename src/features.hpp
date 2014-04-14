@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "stringfile.hpp"
 
 class Features {
@@ -15,4 +16,6 @@ class Features {
   static int getCommonEnding(const StringFile& s1, const StringFile& s2);
   static int getLettersDifference(const StringFile& s1, const StringFile& s2);
   static int getLengthDifference(const StringFile& s1, const StringFile& s2);
+  
+  static std::vector<double> getFeaturesVector(const StringFile& s1, const StringFile& s2);
 };
