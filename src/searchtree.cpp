@@ -62,3 +62,9 @@ int SearchTree::getCode(){
   iter = header;
   return res;
 }
+
+int SearchTree::getCodeNoStat(){
+  int res = iter->code;
+  iter = header;
+  return res;
+}

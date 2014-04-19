@@ -25,4 +25,5 @@ class SearchTree{
 	int addWord(char* str);
 	void addLetter(char c);
   int getCode();
+  int getCodeNoStat();
 };
