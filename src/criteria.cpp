@@ -7,6 +7,26 @@
 #include "features.hpp"
 #include "classifier.hpp"
 
+std::string BeginEndingCriteria::getName() {
+  return "1B3E";
+}
+
+std::string LettersPermutationCriteria::getName() {
+  return "Letters permutation";
+}
+
+std::string AffixesCriteria::getName() {
+  return "Affixes";
+}
+
+std::string AllCriteria::getName() {
+  return "All";
+}
+
+std::string ClassifierCriteria::getName() {
+  return "SVN";
+}
+
 bool BeginEndingCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
   int size1 = s1.word.size;
   int size2 = s2.word.size;

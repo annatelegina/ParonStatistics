@@ -122,11 +122,56 @@ void print_morfemes(const char* filename, Node* header, const char* morphem_name
 	tree_out.close();
 }
 
+void FeaturesForClassifier(const char* filename, std::vector<std::vector<double> >& train_features, 
+    std::vector<int>& train_labels, int label) {
+  WordGroup paronyms_examples(10, MAX_WORD_WIDTH, 0, false);
+  std::ifstream par_dict(filename);
+  while (par_dict.peek() != EOF){
+    par_dict >> paronyms_examples;
+    const array<StringFile>& group = paronyms_examples.getLines();
+    //std::cerr << group.size << " words in wordgroup\n";
+    for (int i = 0; i < group.size; i++) {
+      for (int j = i + 1; j < group.size; j++) {
+        //std::cerr << i << ' ' << j << ' ' << group[i].word << ' ' << group[j].word << std::endl;
+        std::vector<double> features = Features::getFeaturesVector(group[i], group[j]);
+        train_features.push_back(features);
+        train_labels.push_back(label);
+      }
+    }
+  }
+  par_dict.close();
+}
+
+std::vector<int> EstimateCriterias(const char* filename, std::vector<Criteria*>& criterias, bool answer) {
+  std::vector<int> correct(criterias.size() + 1);
+  WordGroup paronyms_examples(10, MAX_WORD_WIDTH, 0, false);
+  std::ifstream par_dict(filename);
+  while (par_dict.peek() != EOF){
+    par_dict >> paronyms_examples;
+    const array<StringFile>& group = paronyms_examples.getLines();
+    //std::cerr << group.size << " words in wordgroup\n";
+    for (int i = 0; i < group.size; i++) {
+      for (int j = i + 1; j < group.size; j++) {
+        //std::cerr << i << ' ' << j << ' ' << group[i].word << ' ' << group[j].word << std::endl;
+        for (int k = 0; k < criterias.size(); k++) {
+          bool crit_ans = criterias[k]->AreParonyms(group[i], group[j]);
+          correct[k] += (crit_ans == answer);
+        }
+        correct[criterias.size()]++;
+      }
+    }
+  }
+  par_dict.close();
+  return correct;
+}
+
 // Usage:
-// ParonStatistics.exe [-e <num>] [-l <num>] [-w <num>] <input_file> <output_file> [ <statistics_file> [<error_file>] ]
+// ParonStatistics.exe [-e <num>] [-l <num>] [-w <num>] [-c <load_cl>] [-s <save_cl>] <input_file> <output_file> [ <statistics_file> [<error_file>] ]
 // -e <num> - (optional) maximal number of word examples for statistics, default value 0
 // -l <num> - (optional) number of columns per line, default value 10
 // -w <num> - (optional) maximal word width, default value 25 (using default value is recommended)
+// -c <load_cl> - (optional) load classifier from file without training
+// -s <save_cl> - (optional) save trained classifier to file
 // <input_file> - path to input file.
 // <output_file> - path to output file.
 // <statistics_file> - (optional) path to statistics output file.
@@ -136,8 +181,9 @@ int main(int argc, char* argv[]){
   setlocale(LC_ALL, "RUSSIAN");
   //std::locale::global(std::locale("ru_RU.CP1251"));
 	//In main function all file openings are marked with comments.
-	//bool argin = 0, argout = 0, argstat = 0, argerr = 0;
-	bool argw = 0, arge = 0, argl = 0, argcl_save = 0, argcl_load = 0;
+	
+  // Command line arguments
+  bool argw = 0, arge = 0, argl = 0, argcl_save = 0, argcl_load = 0;
   const char* cl_save_file;
   const char* cl_load_file;
 	int option;
@@ -171,41 +217,14 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
   
+  // Training classifier
   Classifier paronyms_classifier;
   if (!argcl_load) {
-    WordGroup paronyms_examples(10, MAX_WORD_WIDTH, 0, false);
-    std::ifstream true_paronyms("true_paronyms.txt");
     std::vector<std::vector<double> > train_features;
     std::vector<int> train_labels;
-    while (true_paronyms.peek() != EOF){
-      true_paronyms >> paronyms_examples;
-      const array<StringFile>& group = paronyms_examples.getLines();
-      //std::cerr << group.size << " words in wordgroup\n";
-      for (int i = 0; i < group.size; i++) {
-        for (int j = i + 1; j < group.size; j++) {
-          //std::cerr << i << ' ' << j << ' ' << group[i].word << ' ' << group[j].word << std::endl;
-          std::vector<double> features = Features::getFeaturesVector(group[i], group[j]);
-          train_features.push_back(features);
-          train_labels.push_back(1);
-        }
-      }
-    }
-    true_paronyms.close();
-    std::ifstream false_paronyms("false_paronyms.txt");
-    while (false_paronyms.peek() != EOF){
-      false_paronyms >> paronyms_examples;
-      const array<StringFile>& group = paronyms_examples.getLines();
-      //std::cerr << group.size << " words in wordgroup\n";
-      for (int i = 0; i < group.size; i++) {
-        for (int j = i + 1; j < group.size; j++) {
-          //std::cerr << i << ' ' << j << ' ' << group[i].word << ' ' << group[j].word << std::endl;
-          std::vector<double> features = Features::getFeaturesVector(group[i], group[j]);
-          train_features.push_back(features);
-          train_labels.push_back(-1);
-        }
-      }
-    }
-    false_paronyms.close();
+    FeaturesForClassifier("true_paronyms.txt", train_features, train_labels, 1);
+    FeaturesForClassifier("false_paronyms.txt", train_features, train_labels, -1);
+    FeaturesForClassifier("KVAZI.TXT", train_features, train_labels, 1);
     std::cerr << train_labels.size() << " pairs read for training\n";
     paronyms_classifier.Train(train_features, train_labels);
   } else {
@@ -216,57 +235,26 @@ int main(int argc, char* argv[]){
     paronyms_classifier.SaveToFile(cl_save_file);
   }
   
-  // Estimating classifier
-  
-  int correct_pos = 0, correct_neg = 0;
-  int all_pos = 0, all_neg = 0;
-  int correct_aff = 0;
-  WordGroup paronyms_examples(10, MAX_WORD_WIDTH, 0, false);
-  std::ifstream true_paronyms("RED.TXT");
-  while (true_paronyms.peek() != EOF){
-    true_paronyms >> paronyms_examples;
-    const array<StringFile>& group = paronyms_examples.getLines();
-    //std::cerr << group.size << " words in wordgroup\n";
-    for (int i = 0; i < group.size; i++) {
-      for (int j = i + 1; j < group.size; j++) {
-        //std::cerr << i << ' ' << j << ' ' << group[i].word << ' ' << group[j].word << std::endl;
-        std::vector<double> features = Features::getFeaturesVector(group[i], group[j]);
-        double predict = paronyms_classifier.GetProbability(features);
-        if (predict) {
-          correct_pos++;
-        }
-        all_pos++;
-        correct_aff += (new AffixesCriteria())->AreParonyms(group[i], group[j]);
-      }
-    }
+  // Estimating criterias
+  std::vector<Criteria*> criterias;
+  criterias.push_back(new ClassifierCriteria(paronyms_classifier));
+  criterias.push_back(new AffixesCriteria());
+  criterias.push_back(new BeginEndingCriteria());
+  criterias.push_back(new LettersPermutationCriteria());
+  criterias.push_back(new AllCriteria());
+	std::vector<int> correct_pos = EstimateCriterias("RED.TXT", criterias, 1);
+  std::vector<int> correct_neg = EstimateCriterias("false_paronyms.txt", criterias, 0);
+  int all_pos = correct_pos[criterias.size()];
+  int all_neg = correct_neg[criterias.size()];
+  std::cerr << "Estimation of criterias:" << std::endl;
+  for (int i = 0; i < criterias.size(); ++i) {
+    double precision = double(correct_pos[i]) / all_pos;
+    double recall = double(correct_pos[i]) / (correct_pos[i] + all_neg - correct_neg[i]);
+    std::cerr << "=== " << criterias[i]->getName() << " criteria ===" << std::endl;
+    std::cerr << "Precision: " << precision << std::endl;
+    std::cerr << "Recall: " << recall << std::endl;
+    std::cerr << "F-measure: " << 2 * precision * recall / (precision + recall) << std::endl;    
   }
-  true_paronyms.close();
-  /*std::ifstream false_paronyms("false_paronyms.txt");
-  while (false_paronyms.peek() != EOF){
-    false_paronyms >> paronyms_examples;
-    const array<StringFile>& group = paronyms_examples.getLines();
-    //std::cerr << group.size << " words in wordgroup\n";
-    for (int i = 0; i < group.size; i++) {
-      for (int j = i + 1; j < group.size; j++) {
-        //std::cerr << i << ' ' << j << ' ' << group[i].word << ' ' << group[j].word << std::endl;
-        std::vector<double> features = Features::getFeaturesVector(group[i], group[j]);
-        double predict = paronyms_classifier.GetProbability(features);
-        if (!predict) {
-          correct_neg++;
-        }
-        all_neg++;
-      }
-    }
-  }
-  false_paronyms.close();*/
-  double precision = double(correct_pos) / all_pos;
-  double precision_aff = double(correct_aff) / all_pos;
-  double recall = double(correct_pos) / (correct_pos + all_neg - correct_neg);
-  std::cerr << "Estimation of classifier:" << std::endl;
-  std::cerr << "Precision: " << precision << std::endl;
-  std::cerr << "Affixes precision: " << precision_aff << std::endl;
-  //std::cerr << "Recall: " << recall << std::endl;
-  //std::cerr << "F-measure: " << 2 * precision * recall / (precision + recall) << std::endl;
   
 	std::ifstream in;
 	try {
@@ -281,7 +269,8 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
 	std::cout << "Conversion in progress..." << std::endl;
-
+  
+  // Running all criterias
 	std::ofstream out;
 	try {
     //output file open.
@@ -294,47 +283,37 @@ int main(int argc, char* argv[]){
 		std::cerr << "Wrong output file!\n";
 		return 1;
 	}
-  std::ofstream cr_1b3e("1b3e.txt");
-  std::ofstream perm("perm3.txt");
-  std::ofstream svn("svn.txt");
-  std::ofstream all_stream;
-	std::vector<const char*> errors;
+  std::vector<std::ofstream*> cr_outputs(criterias.size());
+  for (int i = 0; i < criterias.size(); i++) {
+    cr_outputs[i] = new std::ofstream((criterias[i]->getName() + ".txt").c_str());
+  }
+  int formal_criteria = 1;
+  std::vector<const char*> errors;
 	WordGroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES, true);
-  int affixes_pairs = 0;
-  int cr1b3e_pairs = 0;
-  int all_pairs = 0;
-  int perm_pairs = 0;
-  int svn_pairs = 0;
-  Criteria* svn_crit = new ClassifierCriteria(paronyms_classifier);
-	while (in.peek() != EOF){
+  std::vector<int> pairs(criterias.size());
+  while (in.peek() != EOF) {
 		in >> wg;
-		for (int i = 0; i < (int)wg.errors.size(); ++i){
+		for (int i = 0; i < (int)wg.errors.size(); ++i) {
 			errors.push_back(wg.errors[i]);
 		}
-    affixes_pairs += wg.PrintByCriteria(out, new AffixesCriteria());
-    cr1b3e_pairs += wg.PrintByCriteria(cr_1b3e, new BeginEndingCriteria());
-    all_pairs += wg.PrintByCriteria(all_stream, new AllCriteria());
-    perm_pairs += wg.PrintByCriteria(perm, new LettersPermutationCriteria());
-    svn_pairs += wg.PrintByCriteria(svn, svn_crit);
+    for (int i = 0; i < (int)criterias.size(); ++i) {
+      if (i == formal_criteria)
+        wg.PrintByCriteria(out, criterias[i]);
+      pairs[i] += wg.PrintByCriteria(*cr_outputs[i], criterias[i]);
+    }
 	}
-  std::cout << "Total number of pairs: " << all_pairs << std::endl;
-  std::cout << "Affixes criteria: " << affixes_pairs << " pairs.\n";
-	std::cout << "1B3E criteria: " << cr1b3e_pairs << " pairs.\n";
-  std::cout << "Letters permutation criteria: " << perm_pairs << " pairs.\n";
-  std::cout << "Classifier criteria: " << svn_pairs << " pairs.\n";
+  std::cout << "Total number of pairs: " << pairs[4] << std::endl;
+  for (int i = 0; i < (int)criterias.size(); ++i) {
+    std::cout << criterias[i]->getName() << " criteria: " << pairs[i] << " pairs." << std::endl;
+  }
 	in.close();
-  out.close();
-  perm.close();
-  cr_1b3e.close();
-  svn.close();
-  all_stream.close();
-	
-	print_morfemes("suffixes.txt", StringFile::suffixtree.header, "suffixes", 1, 2);
-	print_morfemes("prefixes.txt", StringFile::prefixtree.header, "prefixes", 1, 1);
-	print_morfemes("roots.txt", StringFile::roottree.header, "roots", 1, 1);
-
-  //std::cout << " Done.\n\nStatistics:\n\n";
-
+  for (int i = 0; i < criterias.size(); ++i) {
+    cr_outputs[i]->close();
+    delete cr_outputs[i];
+    delete criterias[i];
+  }
+  
+  // Writing statistics
 	int width = 2;
 	int maxwidth = wg.numofwordsstat();
 	while (maxwidth != 0){
@@ -361,6 +340,10 @@ int main(int argc, char* argv[]){
 			statout.close();
 		}
 		if (!openerror) {
+      print_morfemes("suffixes.txt", StringFile::suffixtree.header, "suffixes", 1, 2);
+      print_morfemes("prefixes.txt", StringFile::prefixtree.header, "prefixes", 1, 1);
+      print_morfemes("roots.txt", StringFile::roottree.header, "roots", 1, 1);
+
 			statout << wg.numofwordsstat() << " words read:\n\n";
 			printstat(statout, "Prefix Distance", wg.prefstat(), wg.prefexmp(), width);
 			printstat(statout, "Suffix Distance", wg.suffstat(), wg.suffexmp(), width);
@@ -371,7 +354,8 @@ int main(int argc, char* argv[]){
 			statout.close();
 		}
 	}
-
+  
+  // Writing dictionary errors
 	if (argc - optind >= 3) {
     //error output file open.
 		std::ofstream errout;
