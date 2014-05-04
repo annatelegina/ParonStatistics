@@ -84,7 +84,7 @@ void print_morfemes(const char* filename, Node* header, const char* morphem_name
 	std::ofstream tree_out;
 	tree_out.open(filename);
 	dict_size = 0;
-	if (header->count != 0) 
+  if (header->count != 0) 
 		header->count = 0;
 	make_dict(header);
 	int common_count = 0;
@@ -173,7 +173,7 @@ int main(int argc, char* argv[]){
   
   Classifier paronyms_classifier;
   if (!argcl_load) {
-    WordGroup paronyms_examples(10, MAX_WORD_WIDTH, 0);
+    WordGroup paronyms_examples(10, MAX_WORD_WIDTH, 0, false);
     std::ifstream true_paronyms("true_paronyms.txt");
     std::vector<std::vector<double> > train_features;
     std::vector<int> train_labels;
@@ -220,8 +220,9 @@ int main(int argc, char* argv[]){
   
   int correct_pos = 0, correct_neg = 0;
   int all_pos = 0, all_neg = 0;
-  WordGroup paronyms_examples(10, MAX_WORD_WIDTH, 0);
-  std::ifstream true_paronyms("true_paronyms.txt");
+  int correct_aff = 0;
+  WordGroup paronyms_examples(10, MAX_WORD_WIDTH, 0, false);
+  std::ifstream true_paronyms("RED.TXT");
   while (true_paronyms.peek() != EOF){
     true_paronyms >> paronyms_examples;
     const array<StringFile>& group = paronyms_examples.getLines();
@@ -235,11 +236,12 @@ int main(int argc, char* argv[]){
           correct_pos++;
         }
         all_pos++;
+        correct_aff += (new AffixesCriteria())->AreParonyms(group[i], group[j]);
       }
     }
   }
   true_paronyms.close();
-  std::ifstream false_paronyms("false_paronyms.txt");
+  /*std::ifstream false_paronyms("false_paronyms.txt");
   while (false_paronyms.peek() != EOF){
     false_paronyms >> paronyms_examples;
     const array<StringFile>& group = paronyms_examples.getLines();
@@ -256,13 +258,15 @@ int main(int argc, char* argv[]){
       }
     }
   }
-  false_paronyms.close();
+  false_paronyms.close();*/
   double precision = double(correct_pos) / all_pos;
+  double precision_aff = double(correct_aff) / all_pos;
   double recall = double(correct_pos) / (correct_pos + all_neg - correct_neg);
   std::cerr << "Estimation of classifier:" << std::endl;
   std::cerr << "Precision: " << precision << std::endl;
-  std::cerr << "Recall: " << recall << std::endl;
-  std::cerr << "F-measure: " << 2 * precision * recall / (precision + recall) << std::endl;
+  std::cerr << "Affixes precision: " << precision_aff << std::endl;
+  //std::cerr << "Recall: " << recall << std::endl;
+  //std::cerr << "F-measure: " << 2 * precision * recall / (precision + recall) << std::endl;
   
 	std::ifstream in;
 	try {
@@ -295,7 +299,7 @@ int main(int argc, char* argv[]){
   std::ofstream svn("svn.txt");
   std::ofstream all_stream;
 	std::vector<const char*> errors;
-	WordGroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES);
+	WordGroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES, true);
   int affixes_pairs = 0;
   int cr1b3e_pairs = 0;
   int all_pairs = 0;
@@ -339,12 +343,7 @@ int main(int argc, char* argv[]){
 	}
 	if (argw || MAX_EXAMPLES > 0) 
 		width = MAX_WORD_WIDTH;
-/*	std::cout << wg.numofwordsstat() << " words read:\n\n";
-	printstat(std::cout, "Prefix", wg.prefstat(),width);
-	printstat(std::cout, "Suffix", wg.suffstat(),width);
-	printstat(std::cout, "Morphem (prefix+suffix)", wg.morfstat(),width);
-	printstat(std::cout, "Word", wg.wordstat(),width);
-*/
+	
 	if (argc - optind >= 2) {
     //statistics output file open.
 		std::ofstream statout;
@@ -373,17 +372,6 @@ int main(int argc, char* argv[]){
 		}
 	}
 
-/*	if (errors.empty())
-		std::cout << "No mistakes found in sourse file\n\n";
-	else{
-		std::cout << errors.size() << " mistakes found in sourse file. Following lines were skipped:\n\n";
-		for (int i=0; i<(int)errors.size(); ++i){
-			std::cout << errors[i] << std::endl;
-		}
-		std::cout << std::endl;
-	}
-*/
-
 	if (argc - optind >= 3) {
     //error output file open.
 		std::ofstream errout;
@@ -405,7 +393,7 @@ int main(int argc, char* argv[]){
 				errout << "No mistakes found in source file\n\n";
 			else{
 				errout << errors.size() << " mistakes found in source file. Following lines were skipped:\n\n";
-				for (int i = 0; i < (int)errors.size(); ++i){
+				for (int i = 0; i < (int)errors.size(); ++i) {
 					errout << errors[i] << std::endl;
 				}
 				errout << std::endl;

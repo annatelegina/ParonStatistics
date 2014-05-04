@@ -71,16 +71,9 @@ void Table::rewrite(const array<StringFile> &ar) {
       }
       if (!(s1.filecodes[3] == s2.filecodes[3]))// && s1.filecodes[5] == s2.filecodes[5])
         continue;
-      /*if (wordcount < 40) {
+      /*if (words > 25900) {
         std::cerr << "1: " << s1.word << ' ' << s1.root << ' ' << s1.pref.size << std::endl;
-        for (int k = 0; k < 4; k++){
-          std::cerr << s1.pref[k] << ' ' << s1.suff[k] << std::endl;
-        }
         std::cerr << "2: " << s2.word << ' ' << s2.root << ' ' << s2.pref.size << std::endl;
-        for (int k = 0; k < 4; k++){
-          std::cerr << s2.pref[k] << ' ' << s2.suff[k] << std::endl;
-        }
-        ++wordcount;
       }*/
       tab[i][j][0] = dist(s1.pref, s2.pref);
       tab[i][j][1] = dist(s1.suff, s2.suff);

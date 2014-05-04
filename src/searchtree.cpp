@@ -64,6 +64,10 @@ int SearchTree::getCode(){
 }
 
 int SearchTree::getCodeNoStat(){
+  if (iter->code == -1){
+    iter->code = currcode;
+    ++currcode;
+  }
   int res = iter->code;
   iter = header;
   return res;

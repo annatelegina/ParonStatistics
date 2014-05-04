@@ -1,10 +1,13 @@
 #include "wordgroup.hpp"
 
-WordGroup::WordGroup(int maxgroup, int maxdist, int maxexamples): maxdist(maxdist), 
-    maxgr(maxgroup), strs(maxgroup), table(maxgroup, maxdist, maxexamples) {}
+WordGroup::WordGroup(int maxgroup, int maxdist, int maxexamples, bool stat): maxdist(maxdist), 
+    maxgr(maxgroup), strs(maxgroup), table(maxgroup, maxdist, maxexamples), stat(stat) {
+  for (int i = 0; i < maxgroup; i++)
+    strs[i].stat = stat;
+}
 
 WordGroup::~WordGroup() {
-  for (int i=0; i<(int)errors.size(); ++i)
+  for (int i = 0; i < (int)errors.size(); ++i)
     delete [] errors[i];
 }
 
@@ -117,7 +120,9 @@ std::ifstream& operator>>(std::ifstream& in, WordGroup& wg) {
     }
     ++i;
   } while (in.peek() != '+' && in.peek() != EOF);
-  wg.table.rewrite(wg.strs);
+  if (wg.stat) {
+    wg.table.rewrite(wg.strs);
+  }
   return in;
 }
 

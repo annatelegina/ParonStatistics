@@ -11,11 +11,12 @@ class WordGroup{
   const int maxdist;
 	array<StringFile> strs;
 	Table table;
+  bool stat;
   
  public:
 	std::vector<const char*> errors;
 	
-  explicit WordGroup(int maxgroup, int maxdist, int maxexamples);
+  explicit WordGroup(int maxgroup, int maxdist, int maxexamples, bool stat);
   ~WordGroup();
   int numofwordsstat();
   array<int>& wordstat();

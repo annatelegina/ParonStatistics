@@ -19,6 +19,7 @@ class StringFile{
 	array<int> pref;
 	array<int> suff;
 	array<char> root;
+  bool stat;
 
 	StringFile();
   
