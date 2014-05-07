@@ -3,7 +3,7 @@
 import bisect
 import sys
 
-okch_f = open('PARON1.TXT', 'r')
+okch_f = open('../PARON1.TXT', 'r')
 red_f = open(sys.argv[1], 'r') #'RED_paronyms.txt'
 out_f = open(sys.argv[2], 'w') #'RED.TXT'
 error_f = open(sys.argv[3], 'w') #'errors.txt'

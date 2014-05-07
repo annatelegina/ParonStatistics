@@ -152,9 +152,13 @@ std::vector<int> EstimateCriterias(const char* filename, std::vector<Criteria*>&
     //std::cerr << group.size << " words in wordgroup\n";
     for (int i = 0; i < group.size; i++) {
       for (int j = i + 1; j < group.size; j++) {
-        //std::cerr << i << ' ' << j << ' ' << group[i].word << ' ' << group[j].word << std::endl;
         for (int k = 0; k < criterias.size(); k++) {
           bool crit_ans = criterias[k]->AreParonyms(group[i], group[j]);
+          if (k == 1 && !(crit_ans == answer)) {
+            std::cerr << Features::getPreffixDistance(group[i], group[j]) <<
+              ' ' << Features::getSuffixDistance(group[i], group[j]) << 
+              ' ' << group[i].word << ' ' << group[j].word << std::endl;
+          }
           correct[k] += (crit_ans == answer);
         }
         correct[criterias.size()]++;
@@ -211,8 +215,8 @@ int main(int argc, char* argv[]){
       break;
 		}
 	}
-	//std::cerr << optind << std::endl;
-	if (argc - optind - 1 < 3) {
+	//std::cerr << argc << ' ' << optind << std::endl;
+	if (argc - optind + 1 < 3) {
 		std::cerr << "Not enough input arguments\n";
 		return 1;
 	}
@@ -335,7 +339,7 @@ int main(int argc, char* argv[]){
 			statout.close();
 		}
 		if (statout.fail()){
-			std::cerr << "Wrong statictics error output file!\n";
+			std::cerr << "Wrong statictics output file!\n";
 			openerror = true;
 			statout.close();
 		}

@@ -111,7 +111,9 @@ std::ifstream& operator>>(std::ifstream& in, WordGroup& wg) {
     if (i >= wg.maxgr)
       std::cerr << "Not enough memory - too big group " << i << ' ' << wg.maxgr << std::endl;
     try {
-      in >> wg.strs[i];
+      StringFile str;
+      in >> str;
+      wg.strs.add(str);
     } catch (char* err) {
       char *e = new char[strlen(err)]; 
       strcpy(e, err);
