@@ -17,7 +17,7 @@ int MAX_WORD_WIDTH = 25;
 
 void printstat(std::ofstream &out, const char* name, const array<int> &stat, const std::vector<std::vector<array<char> > > &examples, int width = 10, int max_cnt = 50){
 	out << name << " statistics:\n\n";
-	int size = std::min(stat.size, max_cnt);
+  int size = std::min(stat.size, max_cnt);
 	int line_size = (size - 1) / PER_LINE;
 	for (int i = 0; i <= line_size; ++i){
 		for (int j = 0; j < PER_LINE && j < size - PER_LINE * i; ++j){
@@ -155,9 +155,9 @@ std::vector<int> EstimateCriterias(const char* filename, std::vector<Criteria*>&
         for (int k = 0; k < criterias.size(); k++) {
           bool crit_ans = criterias[k]->AreParonyms(group[i], group[j]);
           if (k == 1 && !(crit_ans == answer)) {
-            std::cerr << Features::getPreffixDistance(group[i], group[j]) <<
+            /*std::cerr << Features::getPreffixDistance(group[i], group[j]) <<
               ' ' << Features::getSuffixDistance(group[i], group[j]) << 
-              ' ' << group[i].word << ' ' << group[j].word << std::endl;
+              ' ' << group[i].word << ' ' << group[j].word << std::endl;*/
           }
           correct[k] += (crit_ans == answer);
         }
@@ -227,8 +227,11 @@ int main(int argc, char* argv[]){
     std::vector<std::vector<double> > train_features;
     std::vector<int> train_labels;
     FeaturesForClassifier("true_paronyms.txt", train_features, train_labels, 1);
+    std::cerr << "True:" << train_features.size() << std::endl;
     FeaturesForClassifier("false_paronyms.txt", train_features, train_labels, -1);
+    std::cerr << "False:" << train_features.size() << std::endl;
     FeaturesForClassifier("KVAZI.TXT", train_features, train_labels, 1);
+    std::cerr << "Kvazi:" << train_features.size() << std::endl;
     std::cerr << train_labels.size() << " pairs read for training\n";
     paronyms_classifier.Train(train_features, train_labels);
   } else {
@@ -247,7 +250,7 @@ int main(int argc, char* argv[]){
   criterias.push_back(new LettersPermutationCriteria());
   criterias.push_back(new AllCriteria());
 	std::vector<int> correct_pos = EstimateCriterias("RED.TXT", criterias, 1);
-  std::vector<int> correct_neg = EstimateCriterias("false_paronyms.txt", criterias, 0);
+  std::vector<int> correct_neg = EstimateCriterias("false_paronyms.txt", criterias, 0); //(criterias.size() + 1);
   int all_pos = correct_pos[criterias.size()];
   int all_neg = correct_neg[criterias.size()];
   std::cerr << "Estimation of criterias:" << std::endl;
@@ -344,6 +347,7 @@ int main(int argc, char* argv[]){
 			statout.close();
 		}
 		if (!openerror) {
+      std::cout << "Writing statistics..." << std::endl;
       print_morfemes("suffixes.txt", StringFile::suffixtree.header, "suffixes", 1, 2);
       print_morfemes("prefixes.txt", StringFile::prefixtree.header, "prefixes", 1, 1);
       print_morfemes("roots.txt", StringFile::roottree.header, "roots", 1, 1);

@@ -104,10 +104,10 @@ void Table::rewrite(const array<StringFile> &ar) {
         suffexmp[tab[i][j][1]].push_back(s1.word);
         suffexmp[tab[i][j][1]].push_back(s2.word);
       }
-      ++morfstat[tab[i][j][0]+tab[i][j][1]];
-      if ((int)morfexmp[tab[i][j][0]+tab[i][j][1]].size() < maxexmp) {
-        morfexmp[tab[i][j][0]+tab[i][j][1]].push_back(s1.word);
-        morfexmp[tab[i][j][0]+tab[i][j][1]].push_back(s2.word);
+      ++morfstat[tab[i][j][0] + tab[i][j][1]];
+      if ((int)morfexmp[tab[i][j][0] + tab[i][j][1]].size() < maxexmp) {
+        morfexmp[tab[i][j][0] + tab[i][j][1]].push_back(s1.word);
+        morfexmp[tab[i][j][0] + tab[i][j][1]].push_back(s2.word);
       }
       // Checking common pairs statistics
       ++wordstat[wordstat.maxlen - 1];

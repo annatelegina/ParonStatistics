@@ -2,8 +2,6 @@
 
 WordGroup::WordGroup(int maxgroup, int maxdist, int maxexamples, bool stat): maxdist(maxdist), 
     maxgr(maxgroup), strs(maxgroup), table(maxgroup, maxdist, maxexamples), stat(stat) {
-  for (int i = 0; i < maxgroup; i++)
-    strs[i].stat = stat;
 }
 
 WordGroup::~WordGroup() {
@@ -112,6 +110,7 @@ std::ifstream& operator>>(std::ifstream& in, WordGroup& wg) {
       std::cerr << "Not enough memory - too big group " << i << ' ' << wg.maxgr << std::endl;
     try {
       StringFile str;
+      str.stat = wg.stat;
       in >> str;
       wg.strs.add(str);
     } catch (char* err) {

@@ -31,11 +31,11 @@ public:
 	}
   
 	T& operator[](int i){
-		/*if (size < i + 1){
+		if (size < i + 1){
 			size = i + 1;
 			if (size > maxlen)
 				std::cerr << "Array: not enough memory " << maxlen << ' ' << size << std::endl;
-		}*/
+		}
 		return ar[i];
 	}
   

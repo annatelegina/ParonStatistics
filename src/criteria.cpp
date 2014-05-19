@@ -33,11 +33,13 @@ bool BeginEndingCriteria::AreParonyms(const StringFile& s1, const StringFile& s2
   int begining = Features::getCommonBeginning(s1, s2);
   int ending = Features::getCommonEnding(s1, s2);
   int length = Features::getLengthDifference(s1, s2);
-  return length <= 2 && begining >= 1 && ending >= 3;
+  return begining >= 1 && ending >= 3; //length <= 2 && 
 }
 
 bool LettersPermutationCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
-  return Features::getLettersDifference(s1, s2) <= 3;
+  return Features::getLettersDifference(s1, s2) 
+      - Features::getCommonBeginning(s1, s2) 
+      - Features::getCommonEnding(s1, s2) <= 3;
 }
 
 bool AffixesCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
