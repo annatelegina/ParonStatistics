@@ -104,15 +104,31 @@ int Features::getPetAffixesDifference(const StringFile& s1, const StringFile& s2
 }
 
 int Features::getNegativePrefix(const StringFile& s1, const StringFile& s2) {
-  int neg = 0;
-  StringFile::prefixtree.addLetter(0xCD);
-  StringFile::prefixtree.addLetter(0xC5);
-  int neg_num = StringFile::prefixtree.getCodeNoStat();
-  if (s1.pref.size != 0 && s1.pref[0] == neg_num)
-    ++neg;
-  if (s2.pref.size != 0 && s2.pref[0] == neg_num)
-    --neg;
-  return std::abs(neg);
+  std::ifstream negativePrefixes("negative.txt");
+  std::string prefix;
+  std::string word1 = s1.word.toString();
+  std::string word2 = s2.word.toString();
+  bool word1_neg = 0, word2_neg = 0;
+  while (negativePrefixes >> prefix) {
+    for (int i = 0; i < prefix.size(); i++) {
+      unsigned char c = prefix[i];
+      StringFile::prefixtree.addLetter(c);
+    }
+    int pref = StringFile::prefixtree.getCodeNoStat();
+    for (int i = 0; i < s1.pref.size; i++){
+      if (s1.pref[i] == pref) {
+        ++word1_neg;
+        //std::cerr << prefix << ' ' << word1 << std::endl;
+      }
+    }
+    for (int i = 0; i < s2.pref.size; i++){
+      if (s2.pref[i] == pref) {
+        ++word2_neg;
+        //std::cerr << prefix << ' ' << word2 << std::endl;
+      }
+    }
+  }
+  return std::abs(word1_neg - word2_neg);
 }
 
 std::vector<double> Features::getFeaturesVector(const StringFile& s1, const StringFile& s2) {
