@@ -131,6 +131,10 @@ int Features::getNegativePrefix(const StringFile& s1, const StringFile& s2) {
   return std::abs(word1_neg - word2_neg);
 }
 
+int Features::getPartOfSpeech(const StringFile& s1, const StringFile& s2) {
+  return s1.filecodes[1] - '0';
+}
+
 std::vector<double> Features::getFeaturesVector(const StringFile& s1, const StringFile& s2) {
   std::vector<double> features;
   int max_dist = s1.word.maxlen; //std::max(s1.word.size, s2.word.size);
@@ -146,6 +150,10 @@ std::vector<double> Features::getFeaturesVector(const StringFile& s1, const Stri
   features.push_back(double(getLengthDifference(s1, s2)) / max_dist);
   features.push_back(double(getPetAffixesDifference(s1, s2)) / 2);
   features.push_back(double(getNegativePrefix(s1, s2)));
+  /*features.push_back(double(getPartOfSpeech(s1, s2) == 1));
+  features.push_back(double(getPartOfSpeech(s1, s2) == 2));
+  features.push_back(double(getPartOfSpeech(s1, s2) == 3));
+  features.push_back(double(getPartOfSpeech(s1, s2) == 4));*/
   /*std::cerr << s1.word << ' ' << s2.word << std::endl;
   for (int i = 0; i < features.size(); i++) {
     std::cerr << features[i] << ' ';

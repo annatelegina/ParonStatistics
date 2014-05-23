@@ -20,5 +20,7 @@ class Features {
   static int getPetAffixesDifference(const StringFile& s1, const StringFile& s2);
   static int getNegativePrefix(const StringFile& s1, const StringFile& s2);
   
+  static int getPartOfSpeech(const StringFile& s1, const StringFile& s2);
+  
   static std::vector<double> getFeaturesVector(const StringFile& s1, const StringFile& s2);
 };

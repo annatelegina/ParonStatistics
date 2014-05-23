@@ -154,10 +154,10 @@ std::vector<int> EstimateCriterias(const char* filename, std::vector<Criteria*>&
       for (int j = i + 1; j < group.size; j++) {
         for (int k = 0; k < criterias.size(); k++) {
           bool crit_ans = criterias[k]->AreParonyms(group[i], group[j]);
-          if (k == 1 && !(crit_ans == answer)) {
-            /*std::cerr << Features::getPreffixDistance(group[i], group[j]) <<
+          if (k == 0 && !(crit_ans == answer)) {
+            std::cerr << Features::getPreffixDistance(group[i], group[j]) <<
               ' ' << Features::getSuffixDistance(group[i], group[j]) << 
-              ' ' << group[i].word << ' ' << group[j].word << std::endl;*/
+              ' ' << group[i].word << ' ' << group[j].word << std::endl;
           }
           correct[k] += (crit_ans == answer);
         }
@@ -227,6 +227,7 @@ int main(int argc, char* argv[]){
     std::vector<std::vector<double> > train_features;
     std::vector<int> train_labels;
     FeaturesForClassifier("true_paronyms.txt", train_features, train_labels, 1);
+    FeaturesForClassifier("true_second.txt", train_features, train_labels, 1);
     std::cerr << "True:" << train_features.size() << std::endl;
     FeaturesForClassifier("false_paronyms.txt", train_features, train_labels, -1);
     std::cerr << "False:" << train_features.size() << std::endl;
