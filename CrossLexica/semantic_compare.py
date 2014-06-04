@@ -4,6 +4,10 @@ import sys
 import re
 from bisect import bisect_left
 
+path = sys.argv[1] #CrossLexica folder
+build_file = open(sys.argv[2], 'r') #Criteria dict
+f1 = open(sys.argv[3], 'w') #Output file
+
 def distance(s1, s2):
   table = [[0] * (len(s1) + 1) for x in xrange(len(s2) + 1)]
   for i in xrange(len(s2) + 1):
@@ -40,7 +44,7 @@ def find_word(word, keys):
 
 par_modifiers = {}
 parts = {}
-for root, dirs, files in os.walk('paronyms'):
+for root, dirs, files in os.walk(path):
   for filename in files:
     filePath = os.path.join(root, filename)
     #print "Processing " + filePath
@@ -77,10 +81,8 @@ for root, dirs, files in os.walk('paronyms'):
     par_modifiers[word] = modifiers
     f.close()
 
-f1 = open('paronyms_formal.txt', 'w')
 keys = list(par_modifiers.viewkeys())
 keys.sort()
-build_file = open('../par_output.txt', 'r')
 build_lines = build_file.readlines()
 group = []
 digits_pattern = re.compile('(\s\d)')
