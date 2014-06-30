@@ -1,0 +1,14 @@
+Word: подоходный [-] (IDS=187464, POS=a, record=0, translation=[income])
+
+Section: Literal paronyms
+
+подходный
+
+Section: Is Modifier For
+
+подоходный налог
+подоходный налог
+подоходные налоги
+подоходное обложение (книжн.)
+
+

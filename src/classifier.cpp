@@ -145,7 +145,7 @@ double Classifier::funcY(double x, double lambda) {
 }
 
 std::vector<double> Classifier::unlinear(std::vector<double> trainV) {
-	/*std::vector<double> ans;
+	std::vector<double> ans;
   double L = 0.5;
 	for (int i = 0; i < trainV.size(); i++){
 		for (int lambn = -1; lambn <= 1; lambn++){
@@ -153,6 +153,6 @@ std::vector<double> Classifier::unlinear(std::vector<double> trainV) {
 			ans.push_back(funcY(trainV[i] + 1, lambn * L));			
 		}
 	}
-	return ans;*/
-  return trainV;
+	return ans;
+  //return trainV;
 }

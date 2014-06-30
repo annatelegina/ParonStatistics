@@ -1,11 +1,13 @@
 REM Использование:
-REM ParonStatistics.exe [-e <num>] [-l <num>] [-w <num>] <input_file> <output_file> [ <statistics_file> [<error_file>] ]
+REM ParonStatistics.exe [-e <num>] [-l <num>] [-w <num>] [-c <load_cl>] [-s <save_cl>] <input_file> <output_file> [ <statistics_file> [<error_file>] ]
 REM -e <num> - (необязательный) максимальное количество слов-примеров для статистики, по умолчанию 0
 REM -l <num> - (необязательный) количество колонок в файле выводе статистики. Используется для удобства вывода.
 REM -w <num> - (необязательный) максимальная длина слова, по умолчанию 25 символов (рекомендуется использование значения по умолчанию)
+REM -c <load_cl> - (необязательный) загрузка классификатора из файла без обучения
+REM -s <save_cl> - (необязательный) сохранение обученного классификатора в файл
 REM <input_file> - путь ко входному файлу.
 REM <output_file> - путь к выходному файлу.
 REM <statistics_file> - (необязательный) путь к файлу для вывода статистики.
 REM <error_file> - (необязательный) путь к файлу для вывода ошибок, найденных во входном файле.
 
-ParonStatistics.exe -e 20 -l 5 PARON1.TXT par_output.txt par_stat.txt par_err.txt
+ParonStatistics.exe -e 20 -l 5 -s classifier.txt PARON1.TXT par_output.txt par_stat.txt par_err.txt
