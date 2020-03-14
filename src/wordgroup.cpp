@@ -1,5 +1,7 @@
 #include "wordgroup.hpp"
 
+extern int PART_OF_SPEECH;
+
 WordGroup::WordGroup(int maxgroup, int maxdist, int maxexamples, bool stat): maxdist(maxdist), 
     maxgr(maxgroup), strs(maxgroup), table(maxgroup, maxdist, maxexamples), stat(stat) {
 }
@@ -112,6 +114,8 @@ std::ifstream& operator>>(std::ifstream& in, WordGroup& wg) {
       StringFile str;
       str.stat = wg.stat;
       in >> str;
+      if (PART_OF_SPEECH && str.filecodes[1] != PART_OF_SPEECH + '0')
+         break;
       wg.strs.add(str);
     } catch (char* err) {
       char *e = new char[strlen(err)]; 
