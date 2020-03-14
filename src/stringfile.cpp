@@ -1,10 +1,15 @@
 #include "stringfile.hpp"
 
+using namespace std;
+
 StringFile::StringFile(): word(40), pref(10), suff(10), root(40), omon('\0'), stat(true) {}
 
 SearchTree StringFile::prefixtree;
 SearchTree StringFile::suffixtree;
 SearchTree StringFile::roottree;
+
+bool is_vowel(unsigned char c);
+bool is_consonant(unsigned char c);
 
 std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
   char sign = in.get();
@@ -28,20 +33,49 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
   str.root.reset();
   str.omon = '\0';
   int i = 0;
+  int count = 0;
+  unsigned char prev;
+  char help[20];
   //prefixes
   if (str.fileword[i] != '+') {
     ++i;
     while (true) {
       unsigned char c = str.fileword[i];
       if (c >= 0xC0 && c <= 0xDF) {
+        help[count] = c;
         StringFile::prefixtree.addLetter(c);
         str.word.add(c);
       } else if (c == '-') {
+        /*     cout << count << " " << prev << endl;
+        if (count == 1 && is_vowel(prev)) {
+          count = 0;
+          i++;
+	  cout << "MISS " << prev << endl;
+          continue;
+        }
+        else {
+	  cout << "ADD" << endl;
+          for(int p = 0; p < count; p++)
+            StringFile::prefixtree.addLetter(help[p]);
+	  count = 0;
+        }*/
         if (str.stat)
           str.pref.add(StringFile::prefixtree.getCode());
         else
           str.pref.add(StringFile::prefixtree.getCodeNoStat());
       } else if (c == '+') {
+	   /*   cout << count << " " << int(prev) << endl;
+        if (count == 1 && is_vowel(prev)) {
+          count = 0;
+	  cout << "MISS + " << prev << endl;
+          break;
+        }
+        else {
+		cout << "ADD + " << endl;
+          for(int p = 0; p < count; p++)
+            StringFile::prefixtree.addLetter(help[p]);
+	  count = 0;
+        }*/
         if (str.stat)
           str.pref.add(StringFile::prefixtree.getCode());
         else
@@ -58,6 +92,8 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
         throw gg;
       }
       ++i;
+      prev = c;
+      count++;
     }
   }
   ++i;
@@ -151,3 +187,16 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
   return in;
 }
 
+bool is_consonant(char c) {
+  if(!is_vowel(c) && !(c == 0xDA || c == 0xDC))
+    return true;
+  else
+    return false;
+}
+
+bool is_vowel(unsigned char c) {
+  if (c == 0xC0 || c == 0xC5 || c == 0xC8 || c == 0xCE || c == 0xD3 || c == 0xDE || c == 0xDF || c == 0xDD || c == 0xDB)
+    return true;
+  else
+    return false;
+}

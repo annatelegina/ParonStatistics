@@ -220,7 +220,7 @@ int main(int argc, char* argv[]){
 		std::cerr << "Not enough input arguments\n";
 		return 1;
 	}
-  
+ /* 
   // Training classifier
   Classifier paronyms_classifier;
   if (!argcl_load) {
@@ -242,16 +242,16 @@ int main(int argc, char* argv[]){
   if (argcl_save) {
     paronyms_classifier.SaveToFile(cl_save_file);
   }
-  
+  */
   // Estimating criterias
   std::vector<Criteria*> criterias;
-  criterias.push_back(new ClassifierCriteria(paronyms_classifier));
+  //criterias.push_back(new ClassifierCriteria(paronyms_classifier));
   criterias.push_back(new AffixesCriteria());
-  criterias.push_back(new BeginEndingCriteria());
-  criterias.push_back(new LettersPermutationCriteria());
-  criterias.push_back(new AllCriteria());
-	std::vector<int> correct_pos = EstimateCriterias("RED.TXT", criterias, 1);
-  std::vector<int> correct_neg = EstimateCriterias("false_paronyms.txt", criterias, 0); //(criterias.size() + 1);
+  //criterias.push_back(new BeginEndingCriteria());
+  //criterias.push_back(new LettersPermutationCriteria());
+  //criterias.push_back(new AllCriteria());
+	std::vector<int> correct_pos = EstimateCriterias("../RED.txt", criterias, 1);
+  std::vector<int> correct_neg = EstimateCriterias("../false_paronyms.txt", criterias, 0); //(criterias.size() + 1);
   int all_pos = correct_pos[criterias.size()];
   int all_neg = correct_neg[criterias.size()];
   std::cerr << "Estimation of criterias:" << std::endl;
@@ -295,7 +295,7 @@ int main(int argc, char* argv[]){
   for (int i = 0; i < criterias.size(); i++) {
     cr_outputs[i] = new std::ofstream((criterias[i]->getName() + ".txt").c_str());
   }
-  int formal_criteria = 1;
+  int formal_criteria = 0;
   std::vector<const char*> errors;
 	WordGroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES, true);
   std::vector<int> pairs(criterias.size());
