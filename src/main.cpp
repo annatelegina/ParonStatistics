@@ -17,6 +17,10 @@ int MAX_WORD_WIDTH = 25;
 
 bool EXCLUDE_SHORT_PREF = true;
 bool EXCLUDE_SHORT_SUFF = true;
+bool EXCLUDE_SIGNS = true;
+
+//if 0, count for all of the parts of speech, else:
+//1 - noun, 2 - verbs, 3 - adjectives, 4 - adverbs
 int PART_OF_SPEECH = 0;
 
 void printstat(std::ofstream &out, const char* name, const array<int> &stat, const std::vector<std::vector<array<char> > > &examples, int width = 10, int max_cnt = 50){
@@ -150,6 +154,7 @@ std::vector<int> EstimateCriterias(const char* filename, std::vector<Criteria*>&
   std::vector<int> correct(criterias.size() + 1);
   WordGroup paronyms_examples(10, MAX_WORD_WIDTH, 0, false);
   std::ifstream par_dict(filename);
+
   while (par_dict.peek() != EOF){
     par_dict >> paronyms_examples;
     const array<StringFile>& group = paronyms_examples.getLines();
@@ -254,7 +259,7 @@ int main(int argc, char* argv[]){
   //criterias.push_back(new BeginEndingCriteria());
   //criterias.push_back(new LettersPermutationCriteria());
   //criterias.push_back(new AllCriteria());
-	std::vector<int> correct_pos = EstimateCriterias("../RED.txt", criterias, 1);
+  std::vector<int> correct_pos = EstimateCriterias("../RED.txt", criterias, 1);
   std::vector<int> correct_neg = EstimateCriterias("../false_paronyms.txt", criterias, 0); //(criterias.size() + 1);
   int all_pos = correct_pos[criterias.size()];
   int all_neg = correct_neg[criterias.size()];

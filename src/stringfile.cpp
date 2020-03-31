@@ -4,6 +4,8 @@ using namespace std;
 
 extern bool EXCLUDE_SHORT_PREF;
 extern bool EXCLUDE_SHORT_SUFF;
+extern bool EXCLUDE_SIGNS;
+
 
 StringFile::StringFile(): word(40), pref(10), suff(10), root(40), omon('\0'), stat(true) {}
 
@@ -13,6 +15,8 @@ SearchTree StringFile::roottree;
 
 bool is_vowel(unsigned char c);
 bool is_consonant(unsigned char c);
+bool is_sign_letter(unsigned char c);
+
 
 std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
   char sign = in.get();
@@ -44,51 +48,57 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
     ++i;
     while (true) {
       unsigned char c = str.fileword[i];
-      if (c >= 0xC0 && c <= 0xDF) {
-        help[count] = c;
-        //StringFile::prefixtree.addLetter(c);
-        str.word.add(c);
-	count++;
-      } else if (c == '-') {
-        if (count == 1 && is_vowel(prev) && EXCLUDE_SHORT_PREF) {
-          count = 0;
-          i++;
-          continue;
-        }
-        else {
-          for(int p = 0; p < count; p++)
-            StringFile::prefixtree.addLetter(help[p]);
-	  count = 0;
-        }
-        if (str.stat)
-          str.pref.add(StringFile::prefixtree.getCode());
-        else
-          str.pref.add(StringFile::prefixtree.getCodeNoStat());
-      } else if (c == '+') {
-        if (count == 1 && is_vowel(prev) && EXCLUDE_SHORT_PREF) {
-          count = 0;
-          break;
-        }
-        else {
+      if (EXCLUDE_SIGNS && is_sign_letter(c)) {
+
+      }
+      else if (c >= 0xC0 && c <= 0xDF) {
+            help[count] = c;
+            //StringFile::prefixtree.addLetter(c);
+            str.word.add(c);
+	    count++;
+      } 
+      else if (c == '-') {
+          if (count == 1 && is_vowel(prev) && EXCLUDE_SHORT_PREF) {
+              count = 0;
+              i++;
+              continue;
+          }
+          else {
+              for(int p = 0; p < count; p++)
+                  StringFile::prefixtree.addLetter(help[p]);
+	      count = 0;
+          }
+          if (str.stat)
+              str.pref.add(StringFile::prefixtree.getCode());
+          else
+              str.pref.add(StringFile::prefixtree.getCodeNoStat());
+      } 
+      else if (c == '+') {
+          if (count == 1 && is_vowel(prev) && EXCLUDE_SHORT_PREF) {
+              count = 0;
+              break;
+          }
+          else {
 		//cout << "ADD + " << endl;
-          for(int p = 0; p < count; p++)
-            StringFile::prefixtree.addLetter(help[p]);
-	  count = 0;
-        }
-        if (str.stat)
-          str.pref.add(StringFile::prefixtree.getCode());
-        else
-          str.pref.add(StringFile::prefixtree.getCodeNoStat());
-        break;
-      } else {
-        char gg[100];
-        gg[0] = sign;
-        gg[1] = '\0';
-        std::strcat(gg, str.filecodes);
-        std::strcat(gg, str.fileword);
-        std::cerr << "char: " << c << " " << (int) c << " " << std::endl;
-        std::cerr << "Encoding error (prefixes): " << gg << std::endl;
-        throw gg;
+              for(int p = 0; p < count; p++)
+                  StringFile::prefixtree.addLetter(help[p]);
+	      count = 0;
+          }
+          if (str.stat)
+              str.pref.add(StringFile::prefixtree.getCode());
+          else
+              str.pref.add(StringFile::prefixtree.getCodeNoStat());
+          break;
+      } 
+      else {
+          char gg[100];
+          gg[0] = sign;
+          gg[1] = '\0';
+          std::strcat(gg, str.filecodes);
+          std::strcat(gg, str.fileword);
+          std::cerr << "char: " << c << " " << (int) c << " " << std::endl;
+          std::cerr << "Encoding error (prefixes): " << gg << std::endl;
+          throw gg;
       }
       ++i;
       prev = c;
@@ -208,6 +218,13 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
     throw gg;
   }
   return in;
+}
+
+bool is_sign_letter(unsigned char c) {
+	if (c == 0xDA || c == 0xDC)
+		return true;
+	else
+		return false;
 }
 
 bool is_consonant(unsigned char c) {
