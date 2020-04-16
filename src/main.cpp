@@ -15,9 +15,11 @@ int MAX_EXAMPLES = 0;
 int PER_LINE = 10;
 int MAX_WORD_WIDTH = 25;
 
-bool EXCLUDE_SHORT_PREF = true;
-bool EXCLUDE_SHORT_SUFF = true;
-bool EXCLUDE_SIGNS = true;
+bool EXCLUDE_SHORT_PREF = false;
+bool EXCLUDE_SHORT_SUFF = false;
+bool EXCLUDE_SIGNS = false;
+bool EXCLUDE_ANTONYM_PREFIX = true;
+bool EXCLUDE_DIM_SUFF = true;
 
 //if 0, count for all of the parts of speech, else:
 //1 - noun, 2 - verbs, 3 - adjectives, 4 - adverbs

@@ -23,4 +23,7 @@ class Features {
   static int getPartOfSpeech(const StringFile& s1, const StringFile& s2);
   
   static std::vector<double> getFeaturesVector(const StringFile& s1, const StringFile& s2);
+
+  static bool analyzeAntonymPrefix(const StringFile& s1, const StringFile& s2);
+  static bool analyzeDiminSuff(const StringFile& s1, const StringFile& s2);
 };

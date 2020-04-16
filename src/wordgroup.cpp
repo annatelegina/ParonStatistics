@@ -75,8 +75,6 @@ int WordGroup::PrintByCriteria(std::ofstream& out, Criteria* crit) const {
       out << "0 ";
     }
     out << s1.word;
-    /*if (s1.omon != '\0')
-      out << s1.omon;*/
     out << std::endl;
     for (int j = 0; j < this->strs.size; ++j) {
       if (j != i) {
@@ -85,8 +83,9 @@ int WordGroup::PrintByCriteria(std::ofstream& out, Criteria* crit) const {
           continue;
         //filecodes[3] - singular/plural
         if (dist(s1.word, s2.word) != 0 && s1.filecodes[3] == s2.filecodes[3]) { 
-          if (crit->AreParonyms(s1, s2)) {
+          if ((crit->AreParonyms(s1, s2))) {
             paron_pairs++;
+	    //out << s1.word << " " << s2.word << std::endl;
             out << "- " << s2.filecodes[1] << ' ';
             for (int w = 0; w < 2; ++w) {
               out << this->table(i, j, w) << ' ';

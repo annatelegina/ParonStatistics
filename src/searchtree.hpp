@@ -21,9 +21,9 @@ class SearchTree{
 	Node *header;
 
 	SearchTree();
-  ~SearchTree();
+        ~SearchTree();
 	int addWord(char* str);
 	void addLetter(char c);
-  int getCode();
-  int getCodeNoStat();
+        int getCode();
+        int getCodeNoStat();
 };

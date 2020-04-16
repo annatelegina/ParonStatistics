@@ -1,11 +1,16 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
+#include <string>
 
 #include "criteria.hpp"
 #include "distance.hpp"
 #include "features.hpp"
 #include "classifier.hpp"
+#include "searchtree.hpp"
+
+extern bool EXCLUDE_DIM_SUFF;
+extern bool EXCLUDE_ANTONYM_PREFIX;
 
 std::string BeginEndingCriteria::getName() {
   return "1B3E";
@@ -45,8 +50,25 @@ bool LettersPermutationCriteria::AreParonyms(const StringFile& s1, const StringF
 bool AffixesCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
   int pref_dist = Features::getPreffixDistance(s1, s2);
   int suff_dist = Features::getSuffixDistance(s1, s2);
+  
+  if (EXCLUDE_ANTONYM_PREFIX) {
+	  if (!suff_dist && pref_dist > 0) {
+	      bool antonyms;
+	      antonyms = Features::analyzeAntonymPrefix(s1, s2);
+	      if (antonyms)
+		      return false;
+	  }
+  }
+  if (EXCLUDE_DIM_SUFF) {
+	  if (!pref_dist && suff_dist > 0) {
+		  bool diminish;
+		  diminish = Features::analyzeDiminSuff(s1, s2);
+		  if (diminish)
+			  return false;
+	  }
+  }
   return pref_dist == 0 && suff_dist <= 3 ||
-      pref_dist == 1 && suff_dist <= 2;
+          pref_dist == 1 && suff_dist <= 2;
 }
 
 bool AllCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
@@ -61,3 +83,4 @@ bool ClassifierCriteria::AreParonyms(const StringFile& s1, const StringFile& s2)
   //std::cerr << s1.word << ' ' << s2.word << ' ' << probability << std::endl;
   return probability > 0.5;
 }
+

@@ -4,6 +4,71 @@
 #include "features.hpp"
 #include "distance.hpp"
 
+bool Features::analyzeAntonymPrefix(const StringFile& s1, const StringFile& s2) {
+    std::ifstream negativePrefixes("../negative.txt");
+    std::string prefix;
+    std::string word1 = s1.word.toString();
+    std::string word2 = s2.word.toString();
+
+    bool flag1 = false;
+    bool flag2 = false;
+
+    if (std::abs(s1.pref.size - s1.pref.size) > 1)
+        return false;
+
+    while (negativePrefixes >> prefix) {
+        for (int i = 0; i < prefix.size(); i++) {
+            unsigned char c = prefix[i];
+            StringFile::prefixtree.addLetter(c);
+        }
+        int pref = StringFile::prefixtree.getCodeNoStat();
+      
+        if (s1.pref.size > 0 && s1.pref[0] == pref) {
+	    flag1 = true;
+        }
+        if (s2.pref.size > 0 && s2.pref[0] == pref)
+	    flag2 = true;
+    }
+    if (flag1 ^ flag2)
+        return true;
+    else
+	return false;
+}
+
+bool Features::analyzeDiminSuff(const StringFile& s1, const StringFile& s2) {
+    std::ifstream petAffixes("../petAffixes.txt");
+    std::string suffix;
+    std::string word1 = s1.word.toString();
+    std::string word2 = s2.word.toString();
+
+    bool flag1 = false;
+    bool flag2 = false;
+
+    if (std::abs(s1.suff.size - s1.suff.size) > 1)
+        return false;
+
+    while (petAffixes >> suffix) {
+        for (int i = 0; i < suffix.size(); i++) {
+            unsigned char c = suffix[i];
+            StringFile::suffixtree.addLetter(c);
+        }
+        int suff = StringFile::suffixtree.getCodeNoStat();
+
+	for (int i = 0; i < s1.suff.size; i++){
+            if (s1.suff[i] == suff) 
+                flag1 = true;
+        }
+	for (int i = 0; i < s2.suff.size; i++) {
+	    if (s2.suff[i] == suff)
+		    flag2 = true;
+        }
+    }
+    if (flag1 ^ flag2)
+        return true;
+    else
+        return false;
+}
+
 int Features::getWordDistance(const StringFile& s1, const StringFile& s2) {
   Distance dist(s1.word.maxlen);
   return dist(s1.word, s2.word);

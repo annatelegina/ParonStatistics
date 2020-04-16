@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/lib/liblinear/linear.cpp
+math.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+stdarg.h
+-
+linear.h
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/lib/liblinear/linear.h
+tron.h
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/lib/liblinear/tron.h
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/lib/liblinear/linear.h
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/lib/liblinear/tron.cpp
+math.h
+-
+stdio.h
+-
+string.h
+-
+stdarg.h
+-
+tron.h
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/lib/liblinear/tron.h
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/lib/liblinear/tron.h
+

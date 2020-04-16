@@ -1,0 +1,168 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../lib/liblinear/linear.h
+
+../lib/wingetopt.h
+getopt.h
+-
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/array.hpp
+fstream
+-
+iostream
+-
+cstring
+-
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/classifier.cpp
+cmath
+-
+cstdlib
+-
+liblinear/linear.h
+-
+classifier.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/classifier.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/classifier.hpp
+vector
+-
+liblinear/linear.h
+-
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/criteria.cpp
+cmath
+-
+vector
+-
+iostream
+-
+criteria.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/criteria.hpp
+distance.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/distance.hpp
+features.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/features.hpp
+classifier.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/classifier.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/criteria.hpp
+cstring
+-
+stringfile.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/stringfile.hpp
+classifier.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/classifier.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/distance.cpp
+distance.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/distance.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/distance.hpp
+array.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/array.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/features.cpp
+cmath
+-
+vector
+-
+features.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/features.hpp
+distance.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/distance.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/features.hpp
+vector
+-
+stringfile.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/stringfile.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/main.cpp
+fstream
+-
+iostream
+-
+iomanip
+-
+algorithm
+-
+vector
+-
+wingetopt.h
+-
+distance.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/distance.hpp
+stringfile.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/stringfile.hpp
+wordgroup.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/wordgroup.hpp
+classifier.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/classifier.hpp
+features.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/features.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/searchtree.cpp
+cstring
+-
+searchtree.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/searchtree.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/searchtree.hpp
+vector
+-
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/stringfile.cpp
+stringfile.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/stringfile.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/stringfile.hpp
+fstream
+-
+cstring
+-
+iostream
+-
+searchtree.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/searchtree.hpp
+array.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/array.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/table.cpp
+table.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/table.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/table.hpp
+string
+-
+iostream
+-
+vector
+-
+distance.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/distance.hpp
+stringfile.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/stringfile.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/wordgroup.cpp
+wordgroup.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/wordgroup.hpp
+
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/wordgroup.hpp
+fstream
+-
+iomanip
+-
+vector
+-
+table.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/table.hpp
+criteria.hpp
+/media/anna/TOSHIBA EXT/GIT_REPO_PARON/ParonStatistics/src/criteria.hpp
+
