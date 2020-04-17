@@ -21,6 +21,8 @@ bool EXCLUDE_SIGNS = false;
 bool EXCLUDE_ANTONYM_PREFIX = true;
 bool EXCLUDE_DIM_SUFF = true;
 
+bool EXCLUDE_VOWEL_SUFF = false;
+
 //if 0, count for all of the parts of speech, else:
 //1 - noun, 2 - verbs, 3 - adjectives, 4 - adverbs
 int PART_OF_SPEECH = 0;

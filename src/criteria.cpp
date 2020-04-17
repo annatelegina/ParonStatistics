@@ -9,6 +9,8 @@
 #include "classifier.hpp"
 #include "searchtree.hpp"
 
+#include <Python.h>
+
 extern bool EXCLUDE_DIM_SUFF;
 extern bool EXCLUDE_ANTONYM_PREFIX;
 
@@ -50,7 +52,14 @@ bool LettersPermutationCriteria::AreParonyms(const StringFile& s1, const StringF
 bool AffixesCriteria::AreParonyms(const StringFile& s1, const StringFile& s2) {
   int pref_dist = Features::getPreffixDistance(s1, s2);
   int suff_dist = Features::getSuffixDistance(s1, s2);
-  
+
+  // Загрузка интерпретатора Python
+  Py_Initialize();
+  // Выполнение команды в интерпретаторе
+  PyRun_SimpleString("print('Hello!')");
+  // Выгрузка интерпретатора Python
+  Py_Finalize();
+
   if (EXCLUDE_ANTONYM_PREFIX) {
 	  if (!suff_dist && pref_dist > 0) {
 	      bool antonyms;
