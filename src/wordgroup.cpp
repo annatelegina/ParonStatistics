@@ -113,8 +113,8 @@ std::ifstream& operator>>(std::ifstream& in, WordGroup& wg) {
       StringFile str;
       str.stat = wg.stat;
       in >> str;
-      if (PART_OF_SPEECH && str.filecodes[1] != PART_OF_SPEECH + '0')
-         break;
+      //if (PART_OF_SPEECH && str.filecodes[1] != PART_OF_SPEECH + '0')
+      //  break;
       wg.strs.add(str);
     } catch (char* err) {
       char *e = new char[strlen(err)]; 

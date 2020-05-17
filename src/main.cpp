@@ -16,12 +16,14 @@ int PER_LINE = 10;
 int MAX_WORD_WIDTH = 25;
 
 bool EXCLUDE_SHORT_PREF = false;
-bool EXCLUDE_SHORT_SUFF = false;
 bool EXCLUDE_SIGNS = false;
-bool EXCLUDE_ANTONYM_PREFIX = true;
-bool EXCLUDE_DIM_SUFF = true;
-
 bool EXCLUDE_VOWEL_SUFF = false;
+bool CHECK_ALLOMORPH = true;
+
+bool CHECK_PET_SUFF = false;
+bool CHECK_PREFIXES = false;
+bool CHECK_ADJ_SIMILARITY = false;
+float SUFF_THRESHOLD = 0.6;
 
 //if 0, count for all of the parts of speech, else:
 //1 - noun, 2 - verbs, 3 - adjectives, 4 - adverbs
@@ -259,7 +261,7 @@ int main(int argc, char* argv[]){
   // Estimating criterias
   std::vector<Criteria*> criterias;
   //criterias.push_back(new ClassifierCriteria(paronyms_classifier));
-  criterias.push_back(new AffixesCriteria());
+  criterias.push_back(new CombinedCriteria());
   //criterias.push_back(new BeginEndingCriteria());
   //criterias.push_back(new LettersPermutationCriteria());
   //criterias.push_back(new AllCriteria());

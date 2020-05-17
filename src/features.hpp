@@ -24,6 +24,12 @@ class Features {
   
   static std::vector<double> getFeaturesVector(const StringFile& s1, const StringFile& s2);
 
-  static bool analyzeAntonymPrefix(const StringFile& s1, const StringFile& s2);
+  static bool analyzePreffix(const StringFile& s1, const StringFile& s2, bool antonym);
   static bool analyzeDiminSuff(const StringFile& s1, const StringFile& s2);
+  static bool analyzeNotOmonSuff(const StringFile& s1, const StringFile& s2);
+  static bool analyzeOmonSuff(const StringFile& s1, const StringFile& s2, float threshold);
+  static bool analyzeSemantic(const StringFile &s1, const StringFile& s2, float semantic_threshold);
+  static bool checkPartOfSpeech(const StringFile& s1, int part_of_speech);
+  static bool checkAdjVerb(const StringFile& s1, const StringFile& s2);
+  static int checkDistSuff( const StringFile& s1, const StringFile& s2);
 };

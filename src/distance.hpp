@@ -9,6 +9,7 @@
 class Distance {
 	int** table;
 	const int MaxN, MaxM;
+  //int Mode;
   
  public:
   Distance(int max);
@@ -33,13 +34,5 @@ class Distance {
       }
     }
     return table[n1][n2];
-  }
-  template <class T>
-  bool analyze_prefix(const array<T> &ar1, const array<T> &ar2) {
-      const int n1 = ar1.size, n2 = ar2.size;
-      for (int i = 0; i < n1; i++) {
-	      std::cout << "PREEF" << ar1[i] << std::endl;
-      }
-      return false;
   }
 };

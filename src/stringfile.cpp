@@ -1,11 +1,13 @@
 #include "stringfile.hpp"
+#include "array.hpp"
+
+#include <vector>
 
 using namespace std;
 
 extern bool EXCLUDE_SHORT_PREF;
-extern bool EXCLUDE_SHORT_SUFF;
 extern bool EXCLUDE_SIGNS;
-
+extern bool EXCLUDE_VOWEL_SUFF;
 
 StringFile::StringFile(): word(40), pref(10), suff(10), root(40), omon('\0'), stat(true) {}
 
@@ -38,6 +40,11 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
   str.pref.reset();
   str.suff.reset();
   str.root.reset();
+  for (int i = 0; i < str.suff_let.size(); i++) {
+    str.suff_let[i].reset();
+  }
+  str.suff_let.clear();
+
   str.omon = '\0';
   int i = 0;
   int count = 0;
@@ -52,10 +59,9 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
 
       }
       else if (c >= 0xC0 && c <= 0xDF) {
-            help[count] = c;
-            //StringFile::prefixtree.addLetter(c);
-            str.word.add(c);
-	    count++;
+          help[count] = c;
+          str.word.add(c);
+	        count++;
       } 
       else if (c == '-') {
           if (count == 1 && is_vowel(prev) && EXCLUDE_SHORT_PREF) {
@@ -66,7 +72,7 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
           else {
               for(int p = 0; p < count; p++)
                   StringFile::prefixtree.addLetter(help[p]);
-	      count = 0;
+	             count = 0;
           }
           if (str.stat)
               str.pref.add(StringFile::prefixtree.getCode());
@@ -82,7 +88,7 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
 		//cout << "ADD + " << endl;
               for(int p = 0; p < count; p++)
                   StringFile::prefixtree.addLetter(help[p]);
-	      count = 0;
+	             count = 0;
           }
           if (str.stat)
               str.pref.add(StringFile::prefixtree.getCode());
@@ -127,43 +133,47 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
   else
     term = '*';
   count = 0;
+  int k = 0;
   if (str.fileword[i] != term && !(str.fileword[i] >= '1' && str.fileword[i] <= '9')){
+    array <char> tmp(10);
+    count = 0;
     while (true) {
       unsigned char c = str.fileword[i];
-      if (c >= 0xC0 && c <= 0xDF){
-	      help[count] = c;
-        //StringFile::suffixtree.addLetter(c);
+      if (c >= 0xC0 && c <= 0xDF) {
+        if (!(EXCLUDE_VOWEL_SUFF && is_vowel(c) && count + k == 0)) {
+            help[count] = c;
+            count++;
+        }
         str.word.add(c);
-	count++;
+        k++;
+            //StringFile::suffixtree.addLetter(c);
       } else if (c == '-') {
-        if (count == 1 && is_consonant(prev) && EXCLUDE_SHORT_SUFF) {
-          count = 0;
-          i++;
-          continue;
-        }
-        else {
+          if (is_vowel(prev) && EXCLUDE_VOWEL_SUFF) {
+              count--;
+          }
+          if (!count)
+            continue;
           for(int p = 0; p < count; p++)
-            StringFile::suffixtree.addLetter(help[p]);
-          count = 0;
-        }
+                StringFile::suffixtree.addLetter(help[p]);
         if (str.stat)
           str.suff.add(StringFile::suffixtree.getCode());
         else
           str.suff.add(StringFile::suffixtree.getCodeNoStat());
+        count = 0;
+        k = 0;
       } else if (c == term || (c >= '1' && c <= '9')) {
-        if (count == 1 && is_consonant(prev) && EXCLUDE_SHORT_SUFF) {
-          count = 0;
-          break;
+        if (is_vowel(prev) && EXCLUDE_VOWEL_SUFF) {
+              count--;
         }
-        else {
-          for(int p = 0; p < count; p++)
+        if (!count)
+          continue;
+        for(int p = 0; p < count; p++)
             StringFile::suffixtree.addLetter(help[p]);
-          count = 0;
-        }
         if (str.stat)
           str.suff.add(StringFile::suffixtree.getCode());
         else
           str.suff.add(StringFile::suffixtree.getCodeNoStat());
+        k = 0;
         break;
       } else {
         char gg[100];
