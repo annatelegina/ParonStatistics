@@ -16,6 +16,7 @@ SearchTree StringFile::suffixtree;
 SearchTree StringFile::roottree;
 
 bool is_vowel(unsigned char c);
+bool is_vowel_pref(unsigned char c);
 bool is_consonant(unsigned char c);
 bool is_sign_letter(unsigned char c);
 
@@ -64,7 +65,7 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
 	        count++;
       } 
       else if (c == '-') {
-          if (count == 1 && is_vowel(prev) && EXCLUDE_SHORT_PREF) {
+          if (count == 1 && is_vowel_pref(prev) && EXCLUDE_SHORT_PREF) {
               count = 0;
               i++;
               continue;
@@ -85,7 +86,6 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
               break;
           }
           else {
-		//cout << "ADD + " << endl;
               for(int p = 0; p < count; p++)
                   StringFile::prefixtree.addLetter(help[p]);
 	             count = 0;
@@ -146,7 +146,6 @@ std::ifstream& operator>>(std::ifstream& in, StringFile &str) {
         }
         str.word.add(c);
         k++;
-            //StringFile::suffixtree.addLetter(c);
       } else if (c == '-') {
           if (is_vowel(prev) && EXCLUDE_VOWEL_SUFF) {
               count--;
@@ -250,3 +249,11 @@ bool is_vowel(unsigned char c) {
   else
     return false;
 }
+
+bool is_vowel_pref(unsigned char c) {
+  if (c == 0xC5 || c == 0xC8 || c == 0xCE || c == 0xD3 || c == 0xDE || c == 0xDF || c == 0xDD || c == 0xDB)
+    return true;
+  else
+    return false;
+}
+

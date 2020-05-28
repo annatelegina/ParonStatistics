@@ -8,7 +8,6 @@
 #include "distance.hpp"
 #include "stringfile.hpp"
 #include "wordgroup.hpp"
-#include "classifier.hpp"
 #include "features.hpp"
 
 int MAX_EXAMPLES = 0;
@@ -20,10 +19,11 @@ bool EXCLUDE_SIGNS = false;
 bool EXCLUDE_VOWEL_SUFF = false;
 bool CHECK_ALLOMORPH = true;
 
-bool CHECK_PET_SUFF = false;
-bool CHECK_PREFIXES = false;
-bool CHECK_ADJ_SIMILARITY = false;
-float SUFF_THRESHOLD = 0.6;
+bool CHECK_PET_SUFF = true;
+bool CHECK_PREFIXES = true;
+bool CHECK_ADJ_SIMILARITY = true;
+float SUFF_THRESHOLD = 0.55;
+float SYNONYM_THRESHOLD = 0.9;
 
 //if 0, count for all of the parts of speech, else:
 //1 - noun, 2 - verbs, 3 - adjectives, 4 - adverbs
@@ -72,7 +72,7 @@ void make_dict(Node* cur){
 	if (cur == NULL){
 		return;
 	}
-	if (cur->count != 0){ //cur->adjletters.size() == 0){
+	if (cur->count != 0) {
 		dict_key[dict_size] = cur_suff.toString();
 		dict_val[dict_size] = cur->count;
 		dict_depth[dict_size] = depth;
@@ -136,35 +136,15 @@ void print_morfemes(const char* filename, Node* header, const char* morphem_name
 	tree_out.close();
 }
 
-void FeaturesForClassifier(const char* filename, std::vector<std::vector<double> >& train_features, 
-    std::vector<int>& train_labels, int label) {
-  WordGroup paronyms_examples(10, MAX_WORD_WIDTH, 0, false);
-  std::ifstream par_dict(filename);
-  while (par_dict.peek() != EOF){
-    par_dict >> paronyms_examples;
-    const array<StringFile>& group = paronyms_examples.getLines();
-    //std::cerr << group.size << " words in wordgroup\n";
-    for (int i = 0; i < group.size; i++) {
-      for (int j = i + 1; j < group.size; j++) {
-        //std::cerr << i << ' ' << j << ' ' << group[i].word << ' ' << group[j].word << std::endl;
-        std::vector<double> features = Features::getFeaturesVector(group[i], group[j]);
-        train_features.push_back(features);
-        train_labels.push_back(label);
-      }
-    }
-  }
-  par_dict.close();
-}
-
 std::vector<int> EstimateCriterias(const char* filename, std::vector<Criteria*>& criterias, bool answer) {
   std::vector<int> correct(criterias.size() + 1);
   WordGroup paronyms_examples(10, MAX_WORD_WIDTH, 0, false);
   std::ifstream par_dict(filename);
+  Distance dist(MAX_WORD_WIDTH);
 
   while (par_dict.peek() != EOF){
     par_dict >> paronyms_examples;
     const array<StringFile>& group = paronyms_examples.getLines();
-    //std::cerr << group.size << " words in wordgroup\n";
     for (int i = 0; i < group.size; i++) {
       for (int j = i + 1; j < group.size; j++) {
         for (int k = 0; k < criterias.size(); k++) {
@@ -185,12 +165,10 @@ std::vector<int> EstimateCriterias(const char* filename, std::vector<Criteria*>&
 }
 
 // Usage:
-// ParonStatistics.exe [-e <num>] [-l <num>] [-w <num>] [-c <load_cl>] [-s <save_cl>] <input_file> <output_file> [ <statistics_file> [<error_file>] ]
+// ParonStatistics.exe [-e <num>] [-l <num>] [-w <num>] <input_file> <output_file> [ <statistics_file> [<error_file>] ]
 // -e <num> - (optional) maximal number of word examples for statistics, default value 0
 // -l <num> - (optional) number of columns per line, default value 10
 // -w <num> - (optional) maximal word width, default value 25 (using default value is recommended)
-// -c <load_cl> - (optional) load classifier from file without training
-// -s <save_cl> - (optional) save trained classifier to file
 // <input_file> - path to input file.
 // <output_file> - path to output file.
 // <statistics_file> - (optional) path to statistics output file.
@@ -206,9 +184,9 @@ int main(int argc, char* argv[]){
   const char* cl_save_file;
   const char* cl_load_file;
 	int option;
-	while ( (option = getopt(argc, argv, "e:l:w:c:s:")) != -1) {
+	while ( (option = getopt(argc, argv, "p:e:l:w:")) != -1) {
     switch (option) {
-    case 'e':
+    	case 'e':
 			arge = 1;
 			MAX_EXAMPLES = atoi(optarg);
 			break;
@@ -220,14 +198,9 @@ int main(int argc, char* argv[]){
 			argw = 1;
 			MAX_WORD_WIDTH = atoi(optarg);
 			break;
-    case 's':
-			argcl_save = 1;
-			cl_save_file = optarg;
-			break;
-    case 'c':
-      argcl_load = 1;
-      cl_load_file = optarg;
-      break;
+		case 'p':
+        	PART_OF_SPEECH = atoi(optarg);
+        	break;
 		}
 	}
 	//std::cerr << argc << ' ' << optind << std::endl;
@@ -235,38 +208,14 @@ int main(int argc, char* argv[]){
 		std::cerr << "Not enough input arguments\n";
 		return 1;
 	}
- /* 
-  // Training classifier
-  Classifier paronyms_classifier;
-  if (!argcl_load) {
-    std::vector<std::vector<double> > train_features;
-    std::vector<int> train_labels;
-    FeaturesForClassifier("true_paronyms.txt", train_features, train_labels, 1);
-    FeaturesForClassifier("true_second.txt", train_features, train_labels, 1);
-    std::cerr << "True:" << train_features.size() << std::endl;
-    FeaturesForClassifier("false_paronyms.txt", train_features, train_labels, -1);
-    std::cerr << "False:" << train_features.size() << std::endl;
-    FeaturesForClassifier("KVAZI.TXT", train_features, train_labels, 1);
-    std::cerr << "Kvazi:" << train_features.size() << std::endl;
-    std::cerr << train_labels.size() << " pairs read for training\n";
-    paronyms_classifier.Train(train_features, train_labels);
-  } else {
-    paronyms_classifier.LoadFromFile(cl_load_file);
-  }
-  
-  if (argcl_save) {
-    paronyms_classifier.SaveToFile(cl_save_file);
-  }
-  */
+
   // Estimating criterias
   std::vector<Criteria*> criterias;
   //criterias.push_back(new ClassifierCriteria(paronyms_classifier));
   criterias.push_back(new CombinedCriteria());
-  //criterias.push_back(new BeginEndingCriteria());
-  //criterias.push_back(new LettersPermutationCriteria());
-  //criterias.push_back(new AllCriteria());
+  //criterias.push_back(new AffixesCriteria());
   std::vector<int> correct_pos = EstimateCriterias("../RED.txt", criterias, 1);
-  std::vector<int> correct_neg = EstimateCriterias("../false_paronyms.txt", criterias, 0); //(criterias.size() + 1);
+  std::vector<int> correct_neg = EstimateCriterias("../false_paronyms.txt", criterias, 0);
   int all_pos = correct_pos[criterias.size()];
   int all_neg = correct_neg[criterias.size()];
   std::cerr << "Estimation of criterias:" << std::endl;
@@ -312,7 +261,7 @@ int main(int argc, char* argv[]){
   }
   int formal_criteria = 0;
   std::vector<const char*> errors;
-	WordGroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES, true);
+  WordGroup wg(150, MAX_WORD_WIDTH, MAX_EXAMPLES, true);
   std::vector<int> pairs(criterias.size());
   while (in.peek() != EOF) {
 		in >> wg;

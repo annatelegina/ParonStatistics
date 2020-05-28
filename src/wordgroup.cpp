@@ -64,6 +64,7 @@ std::vector<std::vector<array<char> > >& WordGroup::rootexmp() {
 }
 
 int WordGroup::PrintByCriteria(std::ofstream& out, Criteria* crit) const {
+
   Distance dist(maxdist);
   int paron_pairs = 0;
   for (int i = 0; i < this->strs.size; ++i){
@@ -81,24 +82,23 @@ int WordGroup::PrintByCriteria(std::ofstream& out, Criteria* crit) const {
         const StringFile &s2 = this->strs[j];
         if (s2.omon != '\0' && s2.omon != '1')
           continue;
-        //filecodes[3] - singular/plural
-        if (dist(s1.word, s2.word) != 0 && s1.filecodes[3] == s2.filecodes[3]) { 
+        //filecodes[3] - singular/plural, filecodes[5] - gender
+        if (dist(s1.word, s2.word) != 0 && s1.filecodes[3] == s2.filecodes[3] &&
+          s1.filecodes[5] == s2.filecodes[5]) { 
           if ((crit->AreParonyms(s1, s2))) {
             paron_pairs++;
-	    //out << s1.word << " " << s2.word << std::endl;
             out << "- " << s2.filecodes[1] << ' ';
             for (int w = 0; w < 2; ++w) {
               out << this->table(i, j, w) << ' ';
             }
             out << s2.word;
-            /*if (s2.omon != '\0')
-              out << s2.omon;*/
             out << std::endl;
           }
         }
       }
     }
   }
+
   return paron_pairs / 2;
 }
 
@@ -113,8 +113,6 @@ std::ifstream& operator>>(std::ifstream& in, WordGroup& wg) {
       StringFile str;
       str.stat = wg.stat;
       in >> str;
-      //if (PART_OF_SPEECH && str.filecodes[1] != PART_OF_SPEECH + '0')
-      //  break;
       wg.strs.add(str);
     } catch (char* err) {
       char *e = new char[strlen(err)]; 
@@ -133,3 +131,4 @@ std::ifstream& operator>>(std::ifstream& in, WordGroup& wg) {
 const array<StringFile>& WordGroup::getLines() const {
   return strs;
 }
+
